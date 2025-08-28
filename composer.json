@@ -1,0 +1,16 @@
+{
+    "name": "danny50610/laravel-apache-age-driver",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Danny50610\\LaravelApacheAgeDriver\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Chen, Danny",
+            "email": "3949245+danny50610@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
