@@ -1,0 +1,42 @@
+laravel: '@testbench'
+
+providers:
+  - Danny50610\LaravelApacheAgeDriver\ApacheAgeServiceProvider
+  # - Workbench\App\Providers\WorkbenchServiceProvider
+
+migrations:
+  - workbench/database/migrations
+
+seeders:
+  - Workbench\Database\Seeders\DatabaseSeeder
+
+env:
+  - DB_CONNECTION="pgsql"
+  - DB_HOST="db"
+  - DB_PORT="5432"
+  - DB_DATABASE="postgres"
+  - DB_USERNAME="postgres"
+  - DB_PASSWORD="postgres"
+
+workbench:
+  start: '/'
+  install: true
+  health: false
+  discovers:
+    web: true
+    api: true
+    commands: true
+    components: false
+    factories: true
+    views: false
+  build:
+    - asset-publish
+    - create-sqlite-db
+    - db-wipe
+    - migrate-fresh
+  assets:
+    - laravel-assets
+  sync:
+    - from: storage
+      to: workbench/storage
+      reverse: true

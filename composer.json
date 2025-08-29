@@ -1,9 +1,27 @@
 {
     "name": "danny50610/laravel-apache-age-driver",
     "type": "library",
+    "require": {
+        "illuminate/database": "^12.26"
+    },
+    "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.6",
+        "laravel/tinker": "^2.10",
+        "nunomaduro/collision": "^8.8",
+        "orchestra/testbench": "^10.6",
+        "phpunit/phpunit": "^12"
+    },
     "autoload": {
         "psr-4": {
             "Danny50610\\LaravelApacheAgeDriver\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Danny50610\\LaravelApacheAgeDriver\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
         }
     },
     "authors": [
@@ -12,5 +30,36 @@
             "email": "3949245+danny50610@users.noreply.github.com"
         }
     ],
-    "require": {}
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Danny50610\\LaravelApacheAgeDriver\\ApacheAgeServiceProvider"
+            ],
+            "aliases": {
+                "ApacheAge": "Danny50610\\LaravelApacheAgeDriver\\ApacheAge"
+            }
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ],
+        "test": [
+            "@clear",
+            "@php vendor/bin/phpunit"
+        ]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
 }
