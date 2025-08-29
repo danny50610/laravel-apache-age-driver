@@ -19,8 +19,8 @@ class MatchTest extends TestCase
 
         $result = $query->get();
         $this->assertCount(1, $result);
-        $this->assertSame($result[0]->v->label, 'Home');
-        $this->assertSame($result[0]->v->properties, []);
+        $this->assertSame('Home', $result[0]->v->label);
+        $this->assertSame([], $result[0]->v->properties);
     }
 
     public function testMatchVertexWithProperties()
@@ -34,8 +34,8 @@ class MatchTest extends TestCase
 
         $result = $query->get();
         $this->assertCount(1, $result);
-        $this->assertSame($result[0]->v->label, 'Box');
-        $this->assertSame($result[0]->v->properties, ['no' => 3]);
+        $this->assertSame('Box', $result[0]->v->label);
+        $this->assertSame(['no' => 3], $result[0]->v->properties);
     }
 
     public function testMatchEdge()
@@ -49,15 +49,15 @@ class MatchTest extends TestCase
 
         $result = $query->get();
         $this->assertCount(1, $result);
-        $this->assertSame($result[0]->a->label, 'Person');
-        $this->assertSame($result[0]->a->properties, ['name' => 'Node A']);
+        $this->assertSame('Person', $result[0]->a->label);
+        $this->assertSame(['name' => 'Node A'], $result[0]->a->properties);
 
-        $this->assertSame($result[0]->r->label, 'RELTYPE');
-        $this->assertSame($result[0]->r->properties, []);
-        $this->assertSame($result[0]->r->startId, $result[0]->a->id);
-        $this->assertSame($result[0]->r->endId, $result[0]->b->id);
+        $this->assertSame('RELTYPE', $result[0]->r->label);
+        $this->assertSame([], $result[0]->r->properties);
+        $this->assertSame($result[0]->a->id, $result[0]->r->startId);
+        $this->assertSame($result[0]->b->id, $result[0]->r->endId);
 
-        $this->assertSame($result[0]->b->label, 'Person');
-        $this->assertSame($result[0]->b->properties, ['name' => 'Node B']);
+        $this->assertSame('Person', $result[0]->b->label);
+        $this->assertSame(['name' => 'Node B'], $result[0]->b->properties);
     }
 }
