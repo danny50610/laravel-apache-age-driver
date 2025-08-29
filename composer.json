@@ -1,6 +1,7 @@
 {
     "name": "danny50610/laravel-apache-age-driver",
     "type": "library",
+    "license": "MIT",
     "require": {
         "illuminate/database": "^12.26"
     },
