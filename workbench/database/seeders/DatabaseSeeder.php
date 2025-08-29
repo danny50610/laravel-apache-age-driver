@@ -24,13 +24,13 @@ class DatabaseSeeder extends Seeder
         DB::transaction(function () {
             DB::statement('SET SESSION search_path = ag_catalog, public;');
 
-            // for ($i = 1; $i <= 100; $i++) {
-            //     DB::statement("
-            //         SELECT * FROM cypher('graph_name', $$
-            //             CREATE (n:Home)
-            //         $$) as (a agtype);
-            //     ", ['no' => $i]);
-            // }
+            for ($i = 1; $i <= 5; $i++) {
+                DB::statement("
+                    SELECT * FROM cypher('graph_name', $$
+                        CREATE (n:Box {no: \$no})
+                    $$, ?) as (a agtype);
+                ",  [json_encode(['no' => $i])]);
+            }
 
             DB::statement("
                 SELECT * FROM cypher('graph_name', $$

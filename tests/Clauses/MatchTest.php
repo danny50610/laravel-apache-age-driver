@@ -23,6 +23,21 @@ class MatchTest extends TestCase
         $this->assertSame($result[0]->v->properties, []);
     }
 
+    public function testMatchVertexWithProperties()
+    {
+        $query = DB::apacheAgeCypher('graph_name', 'MATCH (v:Box {no: 3}) RETURN v', [], '(v agtype)');
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (v:Box {no: 3}) RETURN v$$) as (v agtype)",
+            $query->toSql(),
+        );
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        $this->assertSame($result[0]->v->label, 'Box');
+        $this->assertSame($result[0]->v->properties, ['no' => 3]);
+    }
+
     public function testMatchEdge()
     {
         $query = DB::apacheAgeCypher('graph_name', "MATCH (a {name: 'Node A'})-[r]->(b {name: 'Node B'}) RETURN *", [], '(a agtype, r agtype, b agtype)');

@@ -46,7 +46,6 @@ class ApacheAgeServiceProvider extends ServiceProvider
                         // ex: "{"id": 844424930131969, "label": "Home", "properties": {}}::vertex"
                         // ex: "{"id": 1407374883553281, "label": "RELTYPE", "end_id": 1125899906842626, "start_id": 1125899906842625, "properties": {}}::edge"
 
-
                         $newValue = null;
                         if (Str::endsWith($value, '::vertex')) {
                             $valueMap = json_decode(substr($value, 0, -8), true);
