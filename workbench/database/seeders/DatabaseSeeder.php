@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         DB::transaction(function () {
-            DB::statement('SET SESSION search_path = ag_catalog, public;');
+            DB::statement('SET LOCAL search_path = ag_catalog, public;');
 
             for ($i = 1; $i <= 5; $i++) {
                 DB::statement("
