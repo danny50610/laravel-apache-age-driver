@@ -37,7 +37,7 @@ class ApacheAgeServiceProvider extends ServiceProvider
          */
 
         Event::listen(ConnectionEstablished::class, function (ConnectionEstablished $event) {
-            if (!$this->app->runningInConsole()) {
+            if ($this->app->runningInConsole()) {
                 return;
             }
 
