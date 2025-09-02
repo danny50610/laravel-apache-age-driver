@@ -17,6 +17,8 @@ jobs:
       matrix:
         phpVersion: ['8.3', '8.4']
 
+    container: danny60072/gitlab-ci-pipeline-php:${{ matrix.phpVersion }}-node22
+
     services:
       db:
         image: apache/age:release_PG15_1.5.0
@@ -31,11 +33,6 @@ jobs:
           --health-retries 5
 
     steps:
-    - name: Setup PHP with specific version of PECL extension
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.phpVersion }}
-
     - uses: actions/checkout@v4
 
     - name: Validate composer.json and composer.lock
@@ -62,10 +59,10 @@ jobs:
         php_extensions: xdebug
         args: --coverage-clover ./coverage.xml
 
-    - name: Upload to Codecov
-      uses: codecov/codecov-action@v4
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      with:
-        files: ./coverage.xml
-        verbose: true
+    # - name: Upload to Codecov
+    #   uses: codecov/codecov-action@v4
+    #   env:
+    #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    #   with:
+    #     files: ./coverage.xml
+    #     verbose: true
