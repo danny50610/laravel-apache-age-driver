@@ -5,16 +5,16 @@ namespace Danny50610\LaravelApacheAgeDriver;
 use Closure;
 use Danny50610\LaravelApacheAgeDriver\Query\AfterQuery;
 use Danny50610\LaravelApacheAgeDriver\Services\ApacheAgeService;
-use function Illuminate\Support\enum_value;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Events\ConnectionEstablished;
 use Illuminate\Database\PostgresConnection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+
+use function Illuminate\Support\enum_value;
 
 class ApacheAgeServiceProvider extends ServiceProvider
 {
