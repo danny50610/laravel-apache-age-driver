@@ -18,6 +18,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement('DROP EXTENSION IF NOT EXISTS age;');
+        DB::statement('DROP EXTENSION IF EXISTS age;');
     }
 };
