@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 class MatchTest extends TestCase
 {
-    // TODO: test get(), cursor(), pluck()
     public function testMatchVertex()
     {
         $query = DB::apacheAgeCypher('graph_name', 'MATCH (v:Home) RETURN v', [], '(v agtype)');
@@ -21,6 +20,38 @@ class MatchTest extends TestCase
         $this->assertCount(1, $result);
         $this->assertSame('Home', $result[0]->v->label);
         $this->assertSame([], $result[0]->v->properties);
+    }
+
+    public function testMatchVertexPluck()
+    {
+        $query = DB::apacheAgeCypher('graph_name', 'MATCH (v:Box) RETURN v', [], '(v agtype)');
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (v:Box) RETURN v$$) as (v agtype)",
+            $query->toSql(),
+        );
+
+        $result = $query->pluck('v');
+        $this->assertCount(5, $result);
+        $this->assertSame('Box', $result[0]->label);
+    }
+
+    public function testMatchVertexCursor()
+    {
+        $query = DB::apacheAgeCypher('graph_name', 'MATCH (v:Box) RETURN v', [], '(v agtype)');
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (v:Box) RETURN v$$) as (v agtype)",
+            $query->toSql(),
+        );
+
+        $results = $query->cursor();
+        $count = 0;
+        foreach ($results as $result) {
+            $count += 1;
+            $this->assertSame('Box', $result->v->label);
+        }
+        $this->assertSame(5, $count);
     }
 
     public function testMatchVertexWithProperties()
@@ -60,4 +91,8 @@ class MatchTest extends TestCase
         $this->assertSame('Person', $result[0]->b->label);
         $this->assertSame(['name' => 'Node B'], $result[0]->b->properties);
     }
+
+    // TODO: testMatchPath
+
+    // TODO: testMatchPREPARE
 }
