@@ -3,8 +3,6 @@
 namespace Danny50610\LaravelApacheAgeDriver;
 
 use Closure;
-use Danny50610\LaravelApacheAgeDriver\Models\Edge;
-use Danny50610\LaravelApacheAgeDriver\Models\Vertex;
 use Danny50610\LaravelApacheAgeDriver\Query\AfterQuery;
 use Danny50610\LaravelApacheAgeDriver\Services\ApacheAgeService;
 use function Illuminate\Support\enum_value;
@@ -12,10 +10,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\PostgresConnection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
-
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-use stdClass;
 
 class ApacheAgeServiceProvider extends ServiceProvider
 {
@@ -36,6 +31,21 @@ class ApacheAgeServiceProvider extends ServiceProvider
                 return $query->match('()->[]->()')
             }, '(v astype)');
          */
+
+        PostgresConnection::macro('apacheAgeCreateGraph', function (string $graphName) {
+            /** @var PostgresConnection $this */
+            return $this->select("SELECT * FROM ag_catalog.create_graph(?);", [$graphName]);
+        });
+
+        PostgresConnection::macro('apacheAgeDropGraph', function (string $graphName, bool $cascade) {
+            /** @var PostgresConnection $this */
+            return $this->select("SELECT * FROM ag_catalog.drop_graph(?, ?);", [$graphName, $cascade]);
+        });
+
+        PostgresConnection::macro('apacheAgeHasGraph', function (string $graphName) {
+            /** @var PostgresConnection $this */
+            return $this->select("SELECT count(*) FROM ag_catalog.ag_graph WHERE name = ?", [$graphName])[0]->count > 0;
+        });
 
         PostgresConnection::macro('apacheAgeCypher', function ($graphName, $queryString, array $parameters, $as) {
             /** @var PostgresConnection $this */
