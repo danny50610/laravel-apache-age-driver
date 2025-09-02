@@ -17,7 +17,9 @@ jobs:
       matrix:
         phpVersion: ['8.3', '8.4']
 
-    container: danny60072/gitlab-ci-pipeline-php:${{ matrix.phpVersion }}-node22
+    container:
+      image: danny60072/gitlab-ci-pipeline-php:${{ matrix.phpVersion }}-node22
+      options: --user 1001
 
     services:
       db:
