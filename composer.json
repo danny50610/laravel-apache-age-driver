@@ -1,5 +1,6 @@
 {
     "name": "danny50610/laravel-apache-age-driver",
+    "description": "A Laravel database driver for Apache AGE, enabling graph database capabilities.",
     "type": "library",
     "license": "MIT",
     "require": {
