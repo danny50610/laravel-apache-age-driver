@@ -7,9 +7,13 @@ use Danny50610\LaravelApacheAgeDriver\Query\AfterQuery;
 use Danny50610\LaravelApacheAgeDriver\Services\ApacheAgeService;
 use function Illuminate\Support\enum_value;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Events\ConnectionEstablished;
 use Illuminate\Database\PostgresConnection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class ApacheAgeServiceProvider extends ServiceProvider
@@ -31,6 +35,14 @@ class ApacheAgeServiceProvider extends ServiceProvider
                 return $query->match('()->[]->()')
             }, '(v astype)');
          */
+
+        Event::listen(ConnectionEstablished::class, function (ConnectionEstablished $event) {
+            if (!$this->app->runningInConsole()) {
+                return;
+            }
+
+            DB::statement('SET SESSION search_path = ag_catalog, public;');
+        });
 
         PostgresConnection::macro('apacheAgeCreateGraph', function (string $graphName) {
             /** @var PostgresConnection $this */
