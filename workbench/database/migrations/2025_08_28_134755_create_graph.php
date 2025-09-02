@@ -10,11 +10,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (DB::select("SELECT count(*) FROM ag_catalog.ag_graph WHERE name = 'graph_name'")[0]->count === 1) {
-            DB::statement("SELECT * FROM ag_catalog.drop_graph('graph_name', true)");
+        if (DB::apacheAgeHasGraph('graph_name')) {
+            DB::apacheAgeDropGraph('graph_name', true);
         }
 
-        DB::statement("SELECT * FROM ag_catalog.create_graph('graph_name')");
+        DB::apacheAgeCreateGraph('graph_name');
     }
 
     /**
@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("SELECT * FROM ag_catalog.drop_graph('graph_name', true)");
+        DB::apacheAgeDropGraph('graph_name', true);
     }
 };

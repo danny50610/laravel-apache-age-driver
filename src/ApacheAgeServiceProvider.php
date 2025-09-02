@@ -60,7 +60,5 @@ class ApacheAgeServiceProvider extends ServiceProvider
 
             return $this;
         });
-
-        // TODO: create global middleware for set search_path (auto register)
     }
 }

@@ -23,11 +23,4 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         DB::statement('SET SESSION search_path = ag_catalog, public;');
     }
-
-    protected function defineEnvironment($app) 
-    {
-    //     tap($app['config'], function (Repository $config) {
-    //         $config->set('database.connections.pgsql.search_path', ['public', 'ag_catalog']); 
-    //     });
-    }
 }
