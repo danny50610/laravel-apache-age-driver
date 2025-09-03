@@ -1,0 +1,19 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Argument of an invalid type stdClass supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Query/AfterQuery.php
+
+		-
+			message: '#^Class Danny50610\\LaravelApacheAgeDriver\\Query\\MatchBase has an uninitialized readonly property \$name\. Assign it in the constructor\.$#'
+			identifier: property.uninitializedReadonly
+			count: 1
+			path: src/Query/MatchBase.php
+
+		-
+			message: '#^Class Danny50610\\LaravelApacheAgeDriver\\Query\\MatchBase has an uninitialized readonly property \$properties\. Assign it in the constructor\.$#'
+			identifier: property.uninitializedReadonly
+			count: 1
+			path: src/Query/MatchBase.php
