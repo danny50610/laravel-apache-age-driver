@@ -8,6 +8,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",
+        "larastan/larastan": "^3.0",
         "laravel/tinker": "^2.10",
         "nunomaduro/collision": "^8.8",
         "orchestra/testbench": "^10.6",
@@ -57,7 +58,10 @@
         ],
         "test": [
             "@clear",
-            "@php vendor/bin/phpunit"
+            "@php vendor/bin/phpunit --coverage-clover ./coverage.xml"
+        ],
+        "phpstan": [
+            "@php /vendor/bin/phpstan analyse --memory-limit=2G"
         ]
     },
     "config": {

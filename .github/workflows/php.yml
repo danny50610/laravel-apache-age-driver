@@ -51,7 +51,10 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
     - name: Test
-      run: ./vendor/bin/phpunit --coverage-clover ./coverage.xml
+      run: composer run test
+
+    - name: Phpstan
+      run: composer run phpstan
 
     - name: Upload to Codecov
       uses: codecov/codecov-action@v5
