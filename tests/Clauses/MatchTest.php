@@ -2,6 +2,8 @@
 
 namespace Danny50610\LaravelApacheAgeDriver\Tests\Clauses;
 
+use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
+use Danny50610\LaravelApacheAgeDriver\Query\Builder;
 use Danny50610\LaravelApacheAgeDriver\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 
@@ -9,7 +11,26 @@ class MatchTest extends TestCase
 {
     public function testMatchVertex()
     {
-        $query = DB::apacheAgeCypher('graph_name', 'MATCH (v:Home) RETURN v', [], '(v agtype)');
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('v', 'Home')->return('v');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (v:Home) RETURN v$$) as (v agtype)",
+            $query->toSql(),
+        );
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        $this->assertSame('Home', $result[0]->v->label);
+        $this->assertSame([], $result[0]->v->properties);
+    }
+
+    public function testMatchVertexUseRaw()
+    {
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->raw('MATCH (v:Home) RETURN v', '(v agtype)', []);
+        });
 
         $this->assertSame(
             "select * from cypher('graph_name', \$\$MATCH (v:Home) RETURN v$$) as (v agtype)",
@@ -24,7 +45,9 @@ class MatchTest extends TestCase
 
     public function testMatchVertexPluck()
     {
-        $query = DB::apacheAgeCypher('graph_name', 'MATCH (v:Box) RETURN v', [], '(v agtype)');
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('v', 'Box')->return('v');
+        });
 
         $this->assertSame(
             "select * from cypher('graph_name', \$\$MATCH (v:Box) RETURN v$$) as (v agtype)",
@@ -38,7 +61,9 @@ class MatchTest extends TestCase
 
     public function testMatchVertexCursor()
     {
-        $query = DB::apacheAgeCypher('graph_name', 'MATCH (v:Box) RETURN v', [], '(v agtype)');
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('v', 'Box')->return('v');
+        });
 
         $this->assertSame(
             "select * from cypher('graph_name', \$\$MATCH (v:Box) RETURN v$$) as (v agtype)",
@@ -56,7 +81,9 @@ class MatchTest extends TestCase
 
     public function testMatchVertexWithProperties()
     {
-        $query = DB::apacheAgeCypher('graph_name', 'MATCH (v:Box {no: 3}) RETURN v', [], '(v agtype)');
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('v', 'Box', ['no' => 3])->return('v');
+        });
 
         $this->assertSame(
             "select * from cypher('graph_name', \$\$MATCH (v:Box {no: 3}) RETURN v$$) as (v agtype)",
@@ -71,7 +98,12 @@ class MatchTest extends TestCase
 
     public function testMatchEdge()
     {
-        $query = DB::apacheAgeCypher('graph_name', "MATCH (a {name: 'Node A'})-[r]->(b {name: 'Node B'}) RETURN *", [], '(a agtype, r agtype, b agtype)');
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('a', null, ['name' => 'Node A'])
+                ->withMatchEdge(Direction::RIGHT, 'r', null)
+                ->withMatchNode('b', null, ['name' => 'Node B'])
+                ->return('*');
+        });
 
         $this->assertSame(
             "select * from cypher('graph_name', \$\$MATCH (a {name: 'Node A'})-[r]->(b {name: 'Node B'}) RETURN *$$) as (a agtype, r agtype, b agtype)",

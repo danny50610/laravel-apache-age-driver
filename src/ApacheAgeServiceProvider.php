@@ -4,6 +4,7 @@ namespace Danny50610\LaravelApacheAgeDriver;
 
 use Closure;
 use Danny50610\LaravelApacheAgeDriver\Query\AfterQuery;
+use Danny50610\LaravelApacheAgeDriver\Query\Builder as QueryBuilder;
 use Danny50610\LaravelApacheAgeDriver\Services\ApacheAgeService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Events\ConnectionEstablished;
@@ -30,12 +31,6 @@ class ApacheAgeServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        /** TODO:
-            DB::apacheAgeCypher('graph_name', function () {
-                return $query->match('()->[]->()')
-            }, '(v astype)');
-         */
-
         Event::listen(ConnectionEstablished::class, function (ConnectionEstablished $event) {
             if ($this->app->runningInConsole()) {
                 return;
@@ -59,14 +54,31 @@ class ApacheAgeServiceProvider extends ServiceProvider
             return $this->select("SELECT count(*) FROM ag_catalog.ag_graph WHERE name = ?", [$graphName])[0]->count > 0;
         });
 
-        PostgresConnection::macro('apacheAgeCypher', function ($graphName, $queryString, array $parameters, $as) {
+        PostgresConnection::macro('apacheAgeCypher', function ($graphName, Closure $closure) {
+            $builder = new QueryBuilder();
+            $builder = $closure($builder);
+            $builder->build();
+
+            $queryString = $builder->getQueryString();
+            $as = $builder->getAs();
+            $parameters = $builder->getParameters();
+
             /** @var PostgresConnection $this */
             return $this->query()->apacheAgeCypherFrom(enum_value($graphName), $queryString, $parameters, $as);
         });
 
         Builder::macro('apacheAgeCypherFrom', function ($graphName, $queryString, array $parameters, $as) {
             /** @var Builder $this */
-            $this->from = new Expression("cypher('{$graphName}', $\${$queryString}$$) as {$as}");
+            $expression = "cypher('{$graphName}', {$queryString}";
+            if (count($parameters) > 0) {
+                $expression .= ", $1";
+            }
+            $expression .= ") as {$as}";
+
+            $this->from = new Expression($expression);
+            if (count($parameters) > 0) {
+                $this->addBinding(json_encode($parameters), 'from');
+            }
 
             $this->afterQuery(Closure::fromCallable(new AfterQuery()));
 
