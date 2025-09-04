@@ -4,6 +4,8 @@ namespace Danny50610\LaravelApacheAgeDriver\Query\Concerns;
 
 trait WithProperties
 {
+    protected readonly array $properties;
+
     protected function propertiesToString(): string
     {
         // 只考慮第一層
