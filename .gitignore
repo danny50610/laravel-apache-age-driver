@@ -90,3 +90,4 @@ _tinker*.php
 .phpunit.cache/
 composer.lock
 coverage
+TODO.md
