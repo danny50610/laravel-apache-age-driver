@@ -4,6 +4,7 @@
     "type": "library",
     "license": "MIT",
     "require": {
+        "php": "^8.4",
         "illuminate/database": "^12.26"
     },
     "require-dev": {
