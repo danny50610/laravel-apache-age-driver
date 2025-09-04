@@ -1,15 +1,9 @@
 <?php
 
-namespace Danny50610\LaravelApacheAgeDriver\Query;
+namespace Danny50610\LaravelApacheAgeDriver\Query\Concerns;
 
-abstract class MatchBase
+trait WithProperties
 {
-    public readonly ?string $name;
-
-    protected readonly array $properties;
-    
-    abstract public function toQueryString(): string;
-
     protected function propertiesToString(): string
     {
         // 只考慮第一層

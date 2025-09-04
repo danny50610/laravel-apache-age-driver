@@ -4,7 +4,6 @@ namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
 use Illuminate\Support\Arr;
-use InvalidArgumentException;
 use LogicException;
 
 class Builder
@@ -15,7 +14,11 @@ class Builder
 
     protected array $parameters = [];
 
+    /** @var array<int, array<MatchBase>> */
     protected array $matches = [];
+
+    /** @var array<int, array<CreateNode>> */
+    protected array $creates = [];
 
     protected array $returns = [];
 
@@ -30,6 +33,7 @@ class Builder
 
     public function matchNode(?string $name = null, ?string $label = null, array $properties = []): static
     {
+        /** @var array<int, MatchBase>  */
         $newMatches = [];
         $newMatches[] = new MatchNode($name, $label, $properties);
 
@@ -69,11 +73,66 @@ class Builder
         return $lastMatches;
     }
 
+        protected function &getLastCreates(): array
+    {
+        $lastIndex = count($this->creates) - 1;
+        if ($lastIndex < 0) {
+            throw new LogicException('Need call createNode() first');
+        }
+        $lastCreates =& $this->creates[$lastIndex];
+        $lastCreatesIndex = count($lastCreates) - 1;
+        if ($lastCreatesIndex < 0) {
+            throw new LogicException('Need call createNode() first');
+        }
+
+        return $lastCreates;
+    }
+
     // TODO: matchRaw (append)
+
+    public function where($column, $operator, $value): static
+    {
+        return $this;
+    }
 
     public function return(string $return): static
     {
         $this->returns[] = $return;
+
+        return $this;
+    }
+
+    public function createNode(?string $name = null, ?string $label = null, array $properties = []): static
+    {
+        $newCreates = [];
+        $newCreates[] = new CreateNode($name, $label, $properties);
+
+        $this->creates[] = $newCreates;
+
+        return $this;
+    }
+
+    public function withCreateNode(?string $name = null, ?string $label = null, array $properties = []): static
+    {
+        $lastCreates =& $this->getLastCreates();
+        $lastCreates[] = new CreateNode($name, $label, $properties);
+
+        return $this;
+    }
+
+    public function withCreateEdge(Direction $direction, ?string $name = null, ?string $label = null, array $properties = []): static
+    {
+        $lastCreates =& $this->getLastCreates();
+        $lastCreates[] = new CreateEdge($direction, $name, $label, $properties);
+
+        return $this;
+    }
+
+    public function setAs(array $asList): static
+    {
+        $this->as = '(' . collect($asList)
+            ->map(fn ($item) => $item . ' agtype')
+            ->join(', ') . ')';
 
         return $this;
     }
@@ -92,6 +151,13 @@ class Builder
                 ->join(', ');
         }
 
+        if (count($this->creates) > 0) {
+            $this->queryString .= 'CREATE ';
+            $this->queryString .= collect($this->creates)
+                ->map(fn($creates) => collect($creates)->map(fn($create) => $create->toQueryString())->join(''))
+                ->join(', ');
+        }
+
         if (count($this->returns) > 0) {
             $this->queryString .= ' RETURN ';
             $this->queryString .= Arr::join($this->returns, ', ');
@@ -105,9 +171,11 @@ class Builder
                 $returns = $this->returns;
             }
 
-            $this->as = '(' . collect($returns)
-                    ->map(fn ($item) => $item . ' agtype')
-                    ->join(', ') . ')';
+            if (is_null($this->as)) {
+                $this->as = '(' . collect($returns)
+                        ->map(fn ($item) => $item . ' agtype')
+                        ->join(', ') . ')';
+            }
         }
     }
 
