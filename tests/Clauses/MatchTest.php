@@ -54,8 +54,10 @@ class MatchTest extends TestCase
             $query->toSql(),
         );
 
-        $bindings = $query->getBindings();
-        dump(($bindings));
+        $this->assertSame(
+            ['{"v1":3}'],
+            $query->getBindings()
+        );
 
         $result = $query->get();
         $this->assertCount(1, $result);
@@ -107,7 +109,7 @@ class MatchTest extends TestCase
 
         $this->assertSame(
             "select * from cypher('graph_name', \$\$MATCH (v:Box {no: 3}) RETURN v$$) as (v agtype)",
-            // "select * from cypher('graph_name', \$\$MATCH (v:Box {no: \$v1}) RETURN v$$, $1) as (v agtype)",
+            // "select * from cypher('graph_name', \$\$MATCH (v:Box {no: \$v1}) RETURN v$$, ?) as (v agtype)",
             $query->toSql(),
         );
 
