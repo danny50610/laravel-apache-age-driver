@@ -7,6 +7,18 @@ parameters:
 			path: src/Query/AfterQuery.php
 
 		-
+			message: '#^Class Danny50610\\LaravelApacheAgeDriver\\Query\\CreateBase has an uninitialized readonly property \$name\. Assign it in the constructor\.$#'
+			identifier: property.uninitializedReadonly
+			count: 1
+			path: src/Query/CreateBase.php
+
+		-
+			message: '#^Class Danny50610\\LaravelApacheAgeDriver\\Query\\CreateBase has an uninitialized readonly property \$properties\. Assign it in the constructor\.$#'
+			identifier: property.uninitializedReadonly
+			count: 1
+			path: src/Query/CreateBase.php
+
+		-
 			message: '#^Class Danny50610\\LaravelApacheAgeDriver\\Query\\MatchBase has an uninitialized readonly property \$name\. Assign it in the constructor\.$#'
 			identifier: property.uninitializedReadonly
 			count: 1
