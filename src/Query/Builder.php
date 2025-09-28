@@ -17,6 +17,9 @@ class Builder
     /** @var array<int, array<MatchBase>> */
     protected array $matches = [];
 
+    /** @var array<int, WherePart> */
+    protected array $wheres = [];
+
     /** @var array<int, array<CreateNode>> */
     protected array $creates = [];
 
@@ -90,9 +93,11 @@ class Builder
 
     // TODO: matchRaw (append)
 
-    public function where($column, $operator, $value): static
+    // TODO: orWhere
+    public function where(string $column, string $operator, string $value): static
     {
-        // TODO:
+        $this->wheres[] = new WherePart($column, $operator, $value);
+
         return $this;
     }
 
@@ -129,6 +134,8 @@ class Builder
         return $this;
     }
 
+    // TODO: createRaw (append)
+
     public function setAs(array $asList): static
     {
         $this->as = '(' . collect($asList)
@@ -156,6 +163,15 @@ class Builder
                         return $match->toQueryString($parameter, $parametersCount);
                     })->join('');
                 })->join(', ');
+        }
+
+        if (count($this->wheres) > 0) {
+            $this->queryString .= 'WHERE ';
+            $this->queryString .= collect($this->wheres)
+                ->map(function ($where) use (&$parameter, &$parametersCount) {
+                    return $where->toQueryString($parameter, $parametersCount);
+                })->join(' AND ');
+            $this->queryString .= ' ';
         }
 
         if (count($this->creates) > 0) {

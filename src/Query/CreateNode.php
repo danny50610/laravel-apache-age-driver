@@ -21,7 +21,7 @@ class CreateNode extends CreateBase
         // ex: ()
         // ex: (a)
         // ex: (a:Home)
-        // ex: (b:Home {name: "node A"})
+        // ex: (b:Home {name: $v1})
         $namePart = $this->name ? $this->name : '';
         $labelPart = $this->label ? ":{$this->label}" : '';
         $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString($parameters, $parametersCount);

@@ -21,7 +21,7 @@ class MatchEdge extends MatchBase
         // ex: -[r]->
         // ex: <-[r]-
         // ex: -[r:Home]->
-        // ex: -[:acted_in {role: "a"}]->
+        // ex: -[:acted_in {role: $v1}]->
         $startArrow = $this->direction === Direction::LEFT ? '<-' : '-';
         $endArrow = $this->direction === Direction::LEFT ? '-' : '->';
         $namePart = $this->name ? $this->name : '';

@@ -96,45 +96,34 @@ class CreateTest extends TestCase
         $this->assertSame('Andres', $result[0]->a->properties['name']);
     }
 
-    /**
-     * 範例：建立 edge 於兩個 nodes 之間
-     * 查詢語句：
-     * SELECT * 
-     * FROM cypher('graph_name', $$
-     *     MATCH (a:Person), (b:Person)
-     *     WHERE a.name = 'Node A' AND b.name = 'Node B'
-     *     CREATE (a)-[e:RELTYPE]->(b)
-     *     RETURN e
-     * $$) as (e agtype);
-     *
-     * 預期結果：
-     * e
-     * {id: 3; startid: 0, endid: 1; label: 'RELTYPE'; properties: {}}::edge
-     * (1 row)
-     */
-    // public function testCreateEdge()
-    // {
-    //     $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
-    //         return $builder->matchNode('a', 'Person')
-    //             ->matchNode('b', 'Person')
-    //             ->where('a.name', '=', 'Node A')
-    //             ->where('b.name', '=', 'Node A')
-    //             ->createNode('a')
-    //             ->withCreateEdge(Direction::RIGHT, 'e', 'RELTYPE')
-    //             ->withCreateNode('b')
-    //             ->return('e');
-    //     });
+    public function testCreateEdge()
+    {
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('a', 'Person')
+                ->matchNode('b', 'Person')
+                ->where('a.name', '=', 'Node A')
+                ->where('b.name', '=', 'Node B')
+                ->createNode('a')
+                ->withCreateEdge(Direction::RIGHT, 'e', 'RELTYPE')
+                ->withCreateNode('b')
+                ->return('e');
+        });
 
-    //     $this->assertSame(
-    //         "select * from cypher('graph_name', \$\$MATCH (a:Person), (b:Person)WHERE a.name = 'Node A' AND b.name = 'Node B'CREATE (a)-[e:RELTYPE]->(b)RETURN e$$) as (e agtype)",
-    //         $query->toSql(),
-    //     );
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (a:Person), (b:Person)WHERE a.name = \$v1 AND b.name = \$v2 CREATE (a)-[e:RELTYPE]->(b) RETURN e$$, ?) as (e agtype)",
+            $query->toSql(),
+        );
 
-    //     $result = $query->get();
-    //     $this->assertCount(1, $result);
-    //     $this->assertSame('RELTYPE', $result[0]->e->label);
-    //     $this->assertSame([], $result[0]->e->properties);
-    // }
+        $this->assertSame(
+            ['{"v1":"Node A","v2":"Node B"}'],
+            $query->getBindings()
+        );
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        $this->assertSame('RELTYPE', $result[0]->e->label);
+        $this->assertSame([], $result[0]->e->properties);
+    }
 
     /**
      * 範例：建立 edge 並設定 properties
