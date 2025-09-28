@@ -14,11 +14,7 @@ class WherePart
     public function toQueryString(array &$parameters, int &$parametersCount): string
     {
         // ex: a.name = $v1
-        if (is_string($this->value)) {
-            $resultValue = addslashes($this->value);
-        } else {
-            $resultValue = $this->value;
-        }
+        $resultValue = addslashes($this->value);
 
         $parameters['v' . $parametersCount] = $resultValue;
         $result =  "{$this->column} {$this->operator} \$v{$parametersCount}";
