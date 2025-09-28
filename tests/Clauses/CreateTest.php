@@ -61,8 +61,13 @@ class CreateTest extends TestCase
         });
 
         $this->assertSame(
-            "select * from cypher('graph_name', \$\$CREATE (:Person {name: 'Andres', title: 'Developer'})$$) as (n agtype)",
+            "select * from cypher('graph_name', \$\$CREATE (:Person {name: \$v1, title: \$v2})$$, ?) as (n agtype)",
             $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":"Andres","v2":"Developer"}'],
+            $query->getBindings()
         );
 
         $result = $query->get();
@@ -76,8 +81,14 @@ class CreateTest extends TestCase
         });
 
         $this->assertSame(
-            "select * from cypher('graph_name', \$\$CREATE (a {name: 'Andres'}) RETURN a$$) as (a agtype)",
+            // "select * from cypher('graph_name', \$\$CREATE (a {name: 'Andres'}) RETURN a$$) as (a agtype)",
+            "select * from cypher('graph_name', \$\$CREATE (a {name: \$v1}) RETURN a$$, ?) as (a agtype)",
             $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":"Andres"}'],
+            $query->getBindings()
         );
 
         $result = $query->get();

@@ -14,7 +14,7 @@ class MatchNode extends MatchBase
     }
 
     #[Override]
-    public function toQueryString(): string
+    public function toQueryString(array &$parameters, int &$parametersCount): string
     {
         // ex: ()
         // ex: (a)
@@ -22,7 +22,7 @@ class MatchNode extends MatchBase
         // ex: (b:Home {name: "node A"})
         $namePart = $this->name ? $this->name : '';
         $labelPart = $this->label ? ":{$this->label}" : '';
-        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString();
+        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString($parameters, $parametersCount);
         return "({$namePart}{$labelPart}{$propertiesJsonPart})";
     }
 }

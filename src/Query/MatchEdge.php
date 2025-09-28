@@ -16,7 +16,7 @@ class MatchEdge extends MatchBase
     }
 
     #[Override]
-    public function toQueryString(): string
+    public function toQueryString(array &$parameters, int &$parametersCount): string
     {
         // ex: -[r]->
         // ex: <-[r]-
@@ -26,7 +26,7 @@ class MatchEdge extends MatchBase
         $endArrow = $this->direction === Direction::LEFT ? '-' : '->';
         $namePart = $this->name ? $this->name : '';
         $labelPart = $this->label ? ":{$this->label}" : '';
-        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString();
+        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString($parameters, $parametersCount);
 
         return "{$startArrow}[{$namePart}{$labelPart}{$propertiesJsonPart}]{$endArrow}";
     }

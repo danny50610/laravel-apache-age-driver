@@ -108,9 +108,13 @@ class MatchTest extends TestCase
         });
 
         $this->assertSame(
-            "select * from cypher('graph_name', \$\$MATCH (v:Box {no: 3}) RETURN v$$) as (v agtype)",
-            // "select * from cypher('graph_name', \$\$MATCH (v:Box {no: \$v1}) RETURN v$$, ?) as (v agtype)",
+            "select * from cypher('graph_name', \$\$MATCH (v:Box {no: \$v1}) RETURN v$$, ?) as (v agtype)",
             $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":3}'],
+            $query->getBindings()
         );
 
         $result = $query->get();
@@ -129,8 +133,13 @@ class MatchTest extends TestCase
         });
 
         $this->assertSame(
-            "select * from cypher('graph_name', \$\$MATCH (a {name: 'Node A'})-[r]->(b {name: 'Node B'}) RETURN *$$) as (a agtype, r agtype, b agtype)",
+            "select * from cypher('graph_name', \$\$MATCH (a {name: \$v1})-[r]->(b {name: \$v2}) RETURN *$$, ?) as (a agtype, r agtype, b agtype)",
             $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":"Node A","v2":"Node B"}'],
+            $query->getBindings()
         );
 
         $result = $query->get();

@@ -4,7 +4,7 @@ namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Override;
 
-class CreateNode
+class CreateNode extends CreateBase
 {
     use Concerns\WithProperties;
 
@@ -15,8 +15,8 @@ class CreateNode
     ) {
     }
 
-    // #[Override]
-    public function toQueryString(): string
+    #[Override]
+    public function toQueryString(array &$parameters, int &$parametersCount): string
     {
         // ex: ()
         // ex: (a)
@@ -24,7 +24,7 @@ class CreateNode
         // ex: (b:Home {name: "node A"})
         $namePart = $this->name ? $this->name : '';
         $labelPart = $this->label ? ":{$this->label}" : '';
-        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString();
+        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString($parameters, $parametersCount);
         return "({$namePart}{$labelPart}{$propertiesJsonPart})";
     }
 }

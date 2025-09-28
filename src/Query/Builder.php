@@ -73,7 +73,7 @@ class Builder
         return $lastMatches;
     }
 
-        protected function &getLastCreates(): array
+    protected function &getLastCreates(): array
     {
         $lastIndex = count($this->creates) - 1;
         if ($lastIndex < 0) {
@@ -92,6 +92,7 @@ class Builder
 
     public function where($column, $operator, $value): static
     {
+        // TODO:
         return $this;
     }
 
@@ -143,19 +144,28 @@ class Builder
             return;
         }
 
+        $parameter = [];
+        $parametersCount = 1;
+
         $this->queryString = '';
         if (count($this->matches) > 0) {
             $this->queryString .= 'MATCH ';
             $this->queryString .= collect($this->matches)
-                ->map(fn($matches) => collect($matches)->map(fn($match) => $match->toQueryString())->join(''))
-                ->join(', ');
+                ->map(function ($matches) use (&$parameter, &$parametersCount) {
+                    return collect($matches)->map(function ($match) use (&$parameter, &$parametersCount) {
+                        return $match->toQueryString($parameter, $parametersCount);
+                    })->join('');
+                })->join(', ');
         }
 
         if (count($this->creates) > 0) {
             $this->queryString .= 'CREATE ';
             $this->queryString .= collect($this->creates)
-                ->map(fn($creates) => collect($creates)->map(fn($create) => $create->toQueryString())->join(''))
-                ->join(', ');
+                ->map(function ($creates) use (&$parameter, &$parametersCount) {
+                    return collect($creates)->map(function ($create) use (&$parameter, &$parametersCount) {
+                        return $create->toQueryString($parameter, $parametersCount);
+                    })->join('');
+                })->join(', ');
         }
 
         if (count($this->returns) > 0) {
@@ -177,6 +187,8 @@ class Builder
                         ->join(', ') . ')';
             }
         }
+
+        $this->parameters = $parameter;
     }
 
     public function getQueryString(): string

@@ -3,8 +3,9 @@
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
+use Override;
 
-class CreateEdge
+class CreateEdge extends CreateBase
 {
     use Concerns\WithProperties;
 
@@ -16,8 +17,8 @@ class CreateEdge
     ) {
     }
 
-    // #[Override]
-    public function toQueryString(): string
+    #[Override]
+    public function toQueryString(array &$parameters, int &$parametersCount): string
     {
         // ex: -[r]->
         // ex: <-[r]-

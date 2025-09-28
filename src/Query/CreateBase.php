@@ -2,7 +2,7 @@
 
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
-abstract class MatchBase
+abstract class CreateBase
 {
     use Concerns\WithProperties;
 
