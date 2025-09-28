@@ -11,7 +11,7 @@ class CreateEdge
     public function __construct(
         protected readonly Direction $direction,
         public readonly ?string $name,
-        protected readonly ?string $label,
+        protected readonly string $label,
         protected readonly array $properties,
     ) {
     }
@@ -26,8 +26,8 @@ class CreateEdge
         $startArrow = $this->direction === Direction::LEFT ? '<-' : '-';
         $endArrow = $this->direction === Direction::LEFT ? '-' : '->';
         $namePart = $this->name ? $this->name : '';
-        $labelPart = $this->label ? ":{$this->label}" : '';
-        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString();
+        $labelPart = ":{$this->label}";
+        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString($parameters, $parametersCount);
 
         return "{$startArrow}[{$namePart}{$labelPart}{$propertiesJsonPart}]{$endArrow}";
     }
