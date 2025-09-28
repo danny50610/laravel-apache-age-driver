@@ -43,6 +43,26 @@ class MatchTest extends TestCase
         $this->assertSame([], $result[0]->v->properties);
     }
 
+    public function testMatchVertexUseRawWithParameters()
+    {
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->raw('MATCH (v:Box {no: $v1}) RETURN v', '(v agtype)', ['v1' => 3]);
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (v:Box {no: \$v1}) RETURN v$$, ?) as (v agtype)",
+            $query->toSql(),
+        );
+
+        $bindings = $query->getBindings();
+        dump(($bindings));
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        $this->assertSame('Box', $result[0]->v->label);
+        $this->assertSame(['no' => 3], $result[0]->v->properties);
+    }
+
     public function testMatchVertexPluck()
     {
         $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
@@ -87,6 +107,7 @@ class MatchTest extends TestCase
 
         $this->assertSame(
             "select * from cypher('graph_name', \$\$MATCH (v:Box {no: 3}) RETURN v$$) as (v agtype)",
+            // "select * from cypher('graph_name', \$\$MATCH (v:Box {no: \$v1}) RETURN v$$, $1) as (v agtype)",
             $query->toSql(),
         );
 

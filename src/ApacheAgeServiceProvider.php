@@ -71,7 +71,7 @@ class ApacheAgeServiceProvider extends ServiceProvider
             /** @var Builder $this */
             $expression = "cypher('{$graphName}', {$queryString}";
             if (count($parameters) > 0) {
-                $expression .= ", $1";
+                $expression .= ", ?";
             }
             $expression .= ") as {$as}";
 
