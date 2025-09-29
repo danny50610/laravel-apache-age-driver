@@ -55,15 +55,17 @@ class ApacheAgeServiceProvider extends ServiceProvider
         });
 
         PostgresConnection::macro('apacheAgeCypher', function ($graphName, Closure $closure) {
+            /** @var PostgresConnection $this */
+
             $builder = new QueryBuilder();
+            /** @var QueryBuilder $builder */
             $builder = $closure($builder);
-            $builder->build();
+            $builder->build($this->getQueryGrammar());
 
             $queryString = $builder->getQueryString();
             $as = $builder->getAs();
             $parameters = $builder->getParameters();
 
-            /** @var PostgresConnection $this */
             return $this->query()->apacheAgeCypherFrom(enum_value($graphName), $queryString, $parameters, $as);
         });
 

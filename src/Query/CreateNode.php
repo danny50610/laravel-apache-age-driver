@@ -2,6 +2,7 @@
 
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
+use Illuminate\Database\Query\Grammars\Grammar;
 use Override;
 
 class CreateNode extends CreateBase
@@ -16,7 +17,7 @@ class CreateNode extends CreateBase
     }
 
     #[Override]
-    public function toQueryString(array &$parameters, int &$parametersCount): string
+    public function toQueryString(Grammar $grammar, array &$parameters, int &$parametersCount): string
     {
         // ex: ()
         // ex: (a)
@@ -24,7 +25,7 @@ class CreateNode extends CreateBase
         // ex: (b:Home {name: $v1})
         $namePart = $this->name ? $this->name : '';
         $labelPart = $this->label ? ":{$this->label}" : '';
-        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString($parameters, $parametersCount);
+        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString($grammar, $parameters, $parametersCount);
         return "({$namePart}{$labelPart}{$propertiesJsonPart})";
     }
 }

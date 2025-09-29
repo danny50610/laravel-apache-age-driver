@@ -3,6 +3,7 @@
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
+use Illuminate\Database\Query\Grammars\Grammar;
 use Override;
 
 class CreateEdge extends CreateBase
@@ -18,7 +19,7 @@ class CreateEdge extends CreateBase
     }
 
     #[Override]
-    public function toQueryString(array &$parameters, int &$parametersCount): string
+    public function toQueryString(Grammar $grammar, array &$parameters, int &$parametersCount): string
     {
         // ex: -[r]->
         // ex: <-[r]-
@@ -28,7 +29,7 @@ class CreateEdge extends CreateBase
         $endArrow = $this->direction === Direction::LEFT ? '-' : '->';
         $namePart = $this->name ? $this->name : '';
         $labelPart = ":{$this->label}";
-        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString($parameters, $parametersCount);
+        $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString($grammar, $parameters, $parametersCount);
 
         return "{$startArrow}[{$namePart}{$labelPart}{$propertiesJsonPart}]{$endArrow}";
     }

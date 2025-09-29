@@ -3,6 +3,7 @@
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
+use Illuminate\Database\Query\Grammars\Grammar;
 use Illuminate\Support\Arr;
 use LogicException;
 
@@ -145,7 +146,7 @@ class Builder
         return $this;
     }
 
-    public function build()
+    public function build(Grammar $grammar)
     {
         if (!is_null($this->queryString)) {
             return;
@@ -158,9 +159,9 @@ class Builder
         if (count($this->matches) > 0) {
             $this->queryString .= 'MATCH ';
             $this->queryString .= collect($this->matches)
-                ->map(function ($matches) use (&$parameter, &$parametersCount) {
-                    return collect($matches)->map(function ($match) use (&$parameter, &$parametersCount) {
-                        return $match->toQueryString($parameter, $parametersCount);
+                ->map(function ($matches) use ($grammar, &$parameter, &$parametersCount) {
+                    return collect($matches)->map(function ($match) use ($grammar, &$parameter, &$parametersCount) {
+                        return $match->toQueryString($grammar, $parameter, $parametersCount);
                     })->join('');
                 })->join(', ');
         }
@@ -177,9 +178,9 @@ class Builder
         if (count($this->creates) > 0) {
             $this->queryString .= 'CREATE ';
             $this->queryString .= collect($this->creates)
-                ->map(function ($creates) use (&$parameter, &$parametersCount) {
-                    return collect($creates)->map(function ($create) use (&$parameter, &$parametersCount) {
-                        return $create->toQueryString($parameter, $parametersCount);
+                ->map(function ($creates) use ($grammar, &$parameter, &$parametersCount) {
+                    return collect($creates)->map(function ($create) use ($grammar, &$parameter, &$parametersCount) {
+                        return $create->toQueryString($grammar, $parameter, $parametersCount);
                     })->join('');
                 })->join(', ');
         }
