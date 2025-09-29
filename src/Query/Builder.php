@@ -109,10 +109,10 @@ class Builder
         return $this;
     }
 
-    public function createNode(?string $name = null, ?string $label = null, array $properties = []): static
+    public function createNode(?string $name = null, ?string $label = null, array $properties = [], ?string $assign = null): static
     {
         $newCreates = [];
-        $newCreates[] = new CreateNode($name, $label, $properties);
+        $newCreates[] = new CreateNode($name, $label, $properties, $assign);
 
         $this->creates[] = $newCreates;
 
@@ -122,7 +122,7 @@ class Builder
     public function withCreateNode(?string $name = null, ?string $label = null, array $properties = []): static
     {
         $lastCreates =& $this->getLastCreates();
-        $lastCreates[] = new CreateNode($name, $label, $properties);
+        $lastCreates[] = new CreateNode($name, $label, $properties, null);
 
         return $this;
     }

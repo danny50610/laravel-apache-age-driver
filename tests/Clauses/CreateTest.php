@@ -154,52 +154,34 @@ class CreateTest extends TestCase
         $this->assertSame('Node A<->Node B', $result[0]->e->properties['name']);
     }
 
-    /**
-     * 範例：建立完整 path
-     * 查詢語句：
-     * SELECT * 
-     * FROM cypher('graph_name', $$
-     *     CREATE p = (andres {name:'Andres'})-[:WORKS_AT]->(neo)<-[:WORKS_AT]-(michael {name:'Michael'})
-     *     RETURN p
-     * $$) as (p agtype);
-     *
-     * 預期結果：
-     * p
-     * [{id:0; label: ''; properties:{name:'Andres'}}::vertex,
-     *  {id: 3; startid: 0, endid: 1; label: 'WORKS_AT'; properties: {}}::edge,
-     *  {id:1; label: ''; properties: {}}::vertex,
-     *  {id: 3; startid: 2, endid: 1; label: 'WORKS_AT'; properties: {}}::edge,
-     *  {id:2; label: ''; properties: {name:'Michael'}}::vertex]::path
-     * (1 row)
-     */
-    // public function testCreateCompletePath()
-    // {
-    //     $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
-    //         return $builder->createNode('andres', null, ['name' => 'Andres'])
-    //             ->withCreateEdge(Direction::RIGHT, null, 'WORKS_AT')
-    //             ->withCreateNode('neo')
-    //             ->withCreateEdge(Direction::LEFT, null, 'WORKS_AT')
-    //             ->withCreateNode('michael', null, ['name' => 'Michael'])
-    //             ->createPath('p')
-    //             ->return('p');
-    //     });
+    public function testCreateCompletePath()
+    {
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->createNode('andres', null, ['name' => 'Andres'], 'p')
+                ->withCreateEdge(Direction::RIGHT, null, 'WORKS_AT')
+                ->withCreateNode('neo')
+                ->withCreateEdge(Direction::LEFT, null, 'WORKS_AT')
+                ->withCreateNode('michael', null, ['name' => 'Michael'])
+                ->return('p');
+        });
 
-    //     $this->assertSame(
-    //         "select * from cypher('graph_name', \$\$CREATE p = (andres {name: \$v1})-[:WORKS_AT]->(neo)<-[:WORKS_AT]-(michael {name: \$v2}) RETURN p$$, ?) as (p agtype)",
-    //         $query->toSql(),
-    //     );
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$CREATE p = (andres {name: \$v1})-[:WORKS_AT]->(neo)<-[:WORKS_AT]-(michael {name: \$v2}) RETURN p$$, ?) as (p agtype)",
+            $query->toSql(),
+        );
 
-    //     $this->assertSame(
-    //         ['{"v1":"Andres","v2":"Michael"}'],
-    //         $query->getBindings()
-    //     );
+        $this->assertSame(
+            ['{"v1":"Andres","v2":"Michael"}'],
+            $query->getBindings()
+        );
 
-    //     $result = $query->get();
-    //     $this->assertCount(1, $result);
-    //     $path = $result[0]->p;
-    //     $this->assertSame('Andres', $path[0]->properties['name']);
-    //     $this->assertSame('WORKS_AT', $path[1]->label);
-    //     $this->assertSame('Michael', $path[4]->properties['name']);
-    // }
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        dump($result);
+        // $path = $result[0]->p;
+        // $this->assertSame('Andres', $path[0]->properties['name']);
+        // $this->assertSame('WORKS_AT', $path[1]->label);
+        // $this->assertSame('Michael', $path[4]->properties['name']);
+    }
 
 }
