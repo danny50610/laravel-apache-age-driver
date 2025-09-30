@@ -24,7 +24,7 @@ agType
   ;
 
 agValue
-  : value typeAnnotation
+  : value typeAnnotation?
   ;
 
 value

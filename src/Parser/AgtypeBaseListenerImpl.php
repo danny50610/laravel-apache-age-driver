@@ -122,20 +122,10 @@ class AgtypeBaseListenerImpl extends AgtypeBaseListener
         $this->pushObjectStack($agtypeMap);
     }
 
-    public function exitObjectValue($ctx): void
-    {
-        // $this->mergeObjectIfTargetIsArray();
-    }
-
     public function enterArrayValue($ctx): void
     {
         $agtypeList = new AgtypeUnrecognizedList();
         $this->pushObjectStack($agtypeList);
-    }
-
-    public function exitArrayValue($ctx): void
-    {
-        // $this->mergeObjectIfTargetIsArray();
     }
 
     public function exitPair($ctx): void
