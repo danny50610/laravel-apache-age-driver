@@ -3,6 +3,8 @@
 namespace Danny50610\LaravelApacheAgeDriver\Tests\Clauses;
 
 use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
+use Danny50610\LaravelApacheAgeDriver\Models\Edge;
+use Danny50610\LaravelApacheAgeDriver\Models\Vertex;
 use Danny50610\LaravelApacheAgeDriver\Query\Builder;
 use Danny50610\LaravelApacheAgeDriver\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
@@ -177,11 +179,30 @@ class CreateTest extends TestCase
 
         $result = $query->get();
         $this->assertCount(1, $result);
-        dump($result);
-        // $path = $result[0]->p;
-        // $this->assertSame('Andres', $path[0]->properties['name']);
-        // $this->assertSame('WORKS_AT', $path[1]->label);
-        // $this->assertSame('Michael', $path[4]->properties['name']);
+        $path = $result[0]->p;
+        $this->assertCount(5, $path);
+
+        $this->assertTrue($path[0] instanceof Vertex);
+        $this->assertNull($path[0]->label);
+        $this->assertSame('Andres', $path[0]->properties['name']);
+
+        $this->assertTrue($path[1] instanceof Edge);
+        $this->assertSame('WORKS_AT', $path[1]->label);
+        $this->assertSame($path[0]->id, $path[1]->startId);
+        $this->assertSame($path[2]->id, $path[1]->endId);
+
+        $this->assertTrue($path[2] instanceof Vertex);
+        $this->assertNull($path[2]->label);
+        $this->assertEmpty($path[2]->properties);
+
+        $this->assertTrue($path[3] instanceof Edge);
+        $this->assertSame('WORKS_AT', $path[3]->label);
+        $this->assertSame($path[4]->id, $path[3]->startId);
+        $this->assertSame($path[2]->id, $path[3]->endId);
+
+        $this->assertTrue($path[4] instanceof Vertex);
+        $this->assertNull($path[4]->label);
+        $this->assertSame('Michael', $path[4]->properties['name']);
     }
 
 }

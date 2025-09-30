@@ -1,6 +1,90 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^PHPDoc tag @var for constant Danny50610\\LaravelApacheAgeDriver\\Parser\\AgtypeLexer\:\:SYMBOLIC_NAMES with type array\<string\> is not subtype of value array\{null, null, null, null, null, null, null, null, \.\.\.\}\.$#'
+			identifier: classConstant.phpDocType
+			count: 1
+			path: src/Parser/AgtypeLexer.php
+
+		-
+			message: '#^Call to an undefined method Antlr\\Antlr4\\Runtime\\Atn\\ATNSimulator\:\:adaptivePredict\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^Method Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\AgTypeContext\:\:agValue\(\) should return Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\AgValueContext\|null but returns Antlr\\Antlr4\\Runtime\\Tree\\ParseTree\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^Method Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\AgValueContext\:\:typeAnnotation\(\) should return Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\TypeAnnotationContext\|null but returns Antlr\\Antlr4\\Runtime\\Tree\\ParseTree\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^Method Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\AgValueContext\:\:value\(\) should return Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\ValueContext\|null but returns Antlr\\Antlr4\\Runtime\\Tree\\ParseTree\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^Method Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\ArrayContext\:\:agValue\(\) should return array\<Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\AgValueContext\>\|Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\AgValueContext\|null but returns Antlr\\Antlr4\\Runtime\\Tree\\ParseTree\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^Method Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\ArrayContext\:\:agValue\(\) should return array\<Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\AgValueContext\>\|Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\AgValueContext\|null but returns array\<Antlr\\Antlr4\\Runtime\\Tree\\ParseTree\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^Method Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\ArrayValueContext\:\:array\(\) should return Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\ArrayContext\|null but returns Antlr\\Antlr4\\Runtime\\Tree\\ParseTree\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^Method Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\FloatValueContext\:\:floatLiteral\(\) should return Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\FloatLiteralContext\|null but returns Antlr\\Antlr4\\Runtime\\Tree\\ParseTree\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^Method Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\ObjContext\:\:pair\(\) should return array\<Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\PairContext\>\|Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\PairContext\|null but returns Antlr\\Antlr4\\Runtime\\Tree\\ParseTree\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^Method Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\ObjContext\:\:pair\(\) should return array\<Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\PairContext\>\|Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\PairContext\|null but returns array\<Antlr\\Antlr4\\Runtime\\Tree\\ParseTree\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^Method Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\ObjectValueContext\:\:obj\(\) should return Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\ObjContext\|null but returns Antlr\\Antlr4\\Runtime\\Tree\\ParseTree\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^Method Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\PairContext\:\:agValue\(\) should return Danny50610\\LaravelApacheAgeDriver\\Parser\\Context\\AgValueContext\|null but returns Antlr\\Antlr4\\Runtime\\Tree\\ParseTree\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
+			message: '#^PHPDoc tag @var for constant Danny50610\\LaravelApacheAgeDriver\\Parser\\AgtypeParser\:\:SYMBOLIC_NAMES with type array\<string\> is not subtype of value array\{null, null, null, null, null, null, null, null, \.\.\.\}\.$#'
+			identifier: classConstant.phpDocType
+			count: 1
+			path: src/Parser/AgtypeParser.php
+
+		-
 			message: '#^Argument of an invalid type stdClass supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1

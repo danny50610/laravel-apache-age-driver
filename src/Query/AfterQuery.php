@@ -11,6 +11,7 @@ use Danny50610\LaravelApacheAgeDriver\Models\Vertex;
 use Danny50610\LaravelApacheAgeDriver\Parser\AgtypeBaseListenerImpl;
 use Danny50610\LaravelApacheAgeDriver\Parser\AgtypeLexer;
 use Danny50610\LaravelApacheAgeDriver\Parser\AgtypeParser;
+use Danny50610\LaravelApacheAgeDriver\Parser\Type\AgtypeAnnotation;
 use Danny50610\LaravelApacheAgeDriver\Parser\Type\AgtypeListImpl;
 use Exception;
 use Illuminate\Support\Collection;
@@ -92,7 +93,28 @@ class AfterQuery
 
             $output = $agtypeListener->getOutput();
             if ($output instanceof AgtypeListImpl) {
-
+                foreach ($output as $agValue) {
+                    if ($agValue instanceof AgtypeAnnotation) {
+                        $annotation = $agValue->getAnnotation();
+                        if ($annotation === 'vertex') {
+                            $newValue->append(new Vertex(
+                                $agValue['id'],
+                                $agValue['label'] == '' ? null : $agValue['label'],
+                                (array) $agValue['properties'],
+                            ));
+                        } elseif ($annotation === 'edge') {
+                            $newValue->append(new Edge(
+                                $agValue['id'],
+                                $agValue['label'] == '' ? null : $agValue['label'],
+                                (array) $agValue['properties'],
+                                $agValue['start_id'],
+                                $agValue['end_id'],
+                            ));
+                        }
+                    } else {
+                        $newValue->append($agValue);
+                    }
+                }
             } else {
                 throw new Exception('Expected List');
             }
