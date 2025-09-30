@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.2.0] - 2023-09-30
+
+- Finish CREATE, MATCH, WHERE
+
 ## [0.1.0] - 2023-08-21
 
 - `DB::apacheAgeCreateGraph('test_graph');`
