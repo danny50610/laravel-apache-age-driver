@@ -5,6 +5,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.4",
+        "antlr/antlr4-php-runtime": "^0.9.1",
         "illuminate/database": "^12.26"
     },
     "require-dev": {
@@ -63,6 +64,9 @@
         ],
         "phpstan": [
             "@php vendor/bin/phpstan analyse --memory-limit=2G"
+        ],
+        "antlr": [
+            "antlr -Dlanguage=PHP -package Danny50610\\\\LaravelApacheAgeDriver\\\\Parser -o src/Parser Agtype.g4"
         ]
     },
     "config": {
