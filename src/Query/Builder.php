@@ -95,7 +95,7 @@ class Builder
     // TODO: matchRaw (append)
 
     // TODO: orWhere
-    public function where(string $column, string $operator, string $value): static
+    public function where(string $column, string $operator, mixed $value): static
     {
         $this->wheres[] = new WherePart($column, $operator, $value);
 

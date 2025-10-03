@@ -7,14 +7,18 @@ class WherePart
     public function __construct(
         protected readonly string $column,
         protected readonly string $operator,
-        protected readonly string $value,
+        protected readonly mixed $value,
     ) {
     }
 
     public function toQueryString(array &$parameters, int &$parametersCount): string
     {
         // ex: a.name = $v1
-        $resultValue = addslashes($this->value);
+        if (is_string($this->value)) {
+            $resultValue = addslashes($this->value);
+        } else {
+            $resultValue = $this->value;
+        }
 
         $parameters['v' . $parametersCount] = $resultValue;
         $result =  "{$this->column} {$this->operator} \$v{$parametersCount}";
