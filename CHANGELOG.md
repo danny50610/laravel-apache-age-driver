@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.4.0] - 2023-10-04
+
+- Add Direction BOTH
+
 ## [0.3.0] - 2023-10-03
 
 - let where support int
