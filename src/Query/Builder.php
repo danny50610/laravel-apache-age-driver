@@ -24,6 +24,8 @@ class Builder
     /** @var array<int, array<CreateNode>> */
     protected array $creates = [];
 
+    protected array $deletes = [];
+
     protected array $returns = [];
 
     public function raw(string $queryString, string $as, array $parameters): static
@@ -137,6 +139,13 @@ class Builder
 
     // TODO: createRaw (append)
 
+    public function delete(string|array $name, bool $isDetached = false): static
+    {
+        $this->deletes[] = new DeletePart($name, $isDetached);
+
+        return $this;
+    }
+
     public function setAs(array $asList): static
     {
         $this->as = '(' . collect($asList)
@@ -183,6 +192,14 @@ class Builder
                         return $create->toQueryString($grammar, $parameter, $parametersCount);
                     })->join('');
                 })->join(', ');
+        }
+
+        if (count($this->deletes) > 0) {
+            $this->queryString .= ' ';
+            $this->queryString .= collect($this->deletes)
+                ->map(function ($delete) use ($grammar, &$parameter, &$parametersCount) {
+                    return $delete->toQueryString($grammar, $parameter, $parametersCount);
+                })->join(' ');
         }
 
         if (count($this->returns) > 0) {
