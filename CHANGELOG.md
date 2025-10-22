@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.5.0] - 2023-10-22
+
+- Finish DELETE, REMOVE, SET
+
 ## [0.4.0] - 2023-10-04
 
 - Add Direction BOTH
