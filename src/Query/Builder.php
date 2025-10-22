@@ -26,6 +26,8 @@ class Builder
 
     protected array $deletes = [];
 
+    protected array $removes = [];
+
     protected array $returns = [];
 
     public function raw(string $queryString, string $as, array $parameters): static
@@ -146,6 +148,13 @@ class Builder
         return $this;
     }
 
+    public function remove(string|array $propertyName): static
+    {
+        $this->removes[] = new RemovePart($propertyName);
+
+        return $this;
+    }
+
     public function setAs(array $asList): static
     {
         $this->as = '(' . collect($asList)
@@ -199,6 +208,14 @@ class Builder
             $this->queryString .= collect($this->deletes)
                 ->map(function ($delete) use ($grammar, &$parameter, &$parametersCount) {
                     return $delete->toQueryString($grammar, $parameter, $parametersCount);
+                })->join(' ');
+        }
+
+        if (count($this->removes) > 0) {
+            $this->queryString .= ' ';
+            $this->queryString .= collect($this->removes)
+                ->map(function ($remove) use ($grammar, &$parameter, &$parametersCount) {
+                    return $remove->toQueryString($grammar, $parameter, $parametersCount);
                 })->join(' ');
         }
 
