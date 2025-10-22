@@ -181,7 +181,7 @@ class DeleteTest extends TestCase
 
     public function testDeleteTwoNodeTypeWithTwoDelete()
     {
-         DB::statement("
+        DB::statement("
             SELECT * FROM cypher('graph_name', $$
                 CREATE (:DeleteNodeTest), (:DeleteNodeTest2)
             $$) as (a agtype);
