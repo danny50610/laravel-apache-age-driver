@@ -219,4 +219,35 @@ class DeleteTest extends TestCase
 
         $this->assertCount(0, $result2);
     }
+
+    public function testDeleteThenReturn()
+    {
+        DB::statement("
+            SELECT * FROM cypher('graph_name', $$
+                CREATE (n:DeleteThenReturnTest {name: 'to be deleted'})
+            $$) as (a agtype);
+        ");
+
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('v', 'DeleteThenReturnTest')
+                ->delete('v')
+                ->return('v');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (v:DeleteThenReturnTest)  DELETE v RETURN v$$) as (v agtype)",
+            $query->toSql(),
+        );
+
+        $this->assertSame(
+            [],
+            $query->getBindings()
+        );
+
+        $result = $query->get();
+
+        $this->assertCount(1, $result);
+        $this->assertSame('DeleteThenReturnTest', $result[0]->v->label);
+        $this->assertSame(['name' => 'to be deleted'], $result[0]->v->properties);
+    }
 }
