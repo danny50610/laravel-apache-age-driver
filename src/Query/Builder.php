@@ -50,7 +50,7 @@ class Builder
         return $this;
     }   
 
-    public function withMatchEdge(Direction $direction, ?string $name = null, ?string $label = null, array $properties = [], ?VariableLengthInfo $variableLengthInfo): static
+    public function withMatchEdge(Direction $direction, ?string $name = null, ?string $label = null, array $properties = [], ?VariableLengthInfo $variableLengthInfo = null): static
     {
         $lastRow =& $this->getLastRow();
         if (!($lastRow[count($lastRow) - 1] instanceof MatchNode)) {
