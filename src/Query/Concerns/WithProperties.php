@@ -11,8 +11,6 @@ trait WithProperties
 
     protected function propertiesToString(Grammar $grammar, array &$parameters, int &$parametersCount): string
     {
-        // 只考慮第一層
-        // TODO: 支援巢狀
         $result = '{';
         $result .= collect($this->properties)->map(function($value, $key) use ($grammar, &$parameters, &$parametersCount) {
             if (is_string($value)) {

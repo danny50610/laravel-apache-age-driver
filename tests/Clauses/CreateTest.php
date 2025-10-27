@@ -227,6 +227,45 @@ class CreateTest extends TestCase
         $this->assertSame('Alice', $result[0]->a->properties['name']);
     }
 
+    public function testCreateWithComplexProperties()
+    {
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->createNode('n', 'Person', [
+                'name' => 'Andres',
+                'age' => 30,
+                'address' => [
+                    'street' => '123 Main St',
+                    'city' => 'Anytown',
+                    'zip' => '12345',
+                ],
+                'isActive' => true,
+            ])->return('n');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$CREATE (n:Person {name: \$v1, age: \$v2, address: \$v3, isActive: \$v4}) RETURN n$$, ?) as (n agtype)",
+            $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":"Andres","v2":30,"v3":{"street":"123 Main St","city":"Anytown","zip":"12345"},"v4":true}'],
+            $query->getBindings()
+        );
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        $this->assertSame([
+            'age' => 30,
+            'name' => 'Andres',
+            'address' => [
+                'zip' => '12345',
+                'city' => 'Anytown',
+                'street' => '123 Main St',
+            ],
+            'isActive' => true,
+        ], $result[0]->n->properties);
+    }
+
     // TODO: test2
     // M MN ME MN
     // ORDER
