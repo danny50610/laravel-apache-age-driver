@@ -4,6 +4,7 @@ namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\CreateClause;
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\MatchClause;
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\VariableLengthInfo;
 use Illuminate\Database\Query\Grammars\Grammar;
@@ -134,7 +135,14 @@ class Builder
         return $this;
     }
 
-    // TODO: createRaw (append)
+    public function createRaw(string $queryString, array $bindings = []): static
+    {
+        $this->rows[] = [
+            new CreateRaw($queryString, $bindings),
+        ];
+
+        return $this;
+    }
 
     public function set(array $values): static
     {
@@ -189,13 +197,13 @@ class Builder
                 if ($rowIndex === 0) {
                     if ($row[0] instanceof MatchClause) {
                         $rowStringParts .= 'MATCH ';
-                    } elseif ($row[0] instanceof CreateNode) {
+                    } elseif ($row[0] instanceof CreateClause) {
                         $rowStringParts .= 'CREATE ';
                     }
                 } else {
                     if (!($this->rows[$rowIndex - 1][0] instanceof MatchClause) && $row[0] instanceof MatchClause) {
                         $rowStringParts .= ' MATCH ';
-                    } elseif (!($this->rows[$rowIndex - 1][0] instanceof CreateNode) && $row[0] instanceof CreateNode) {
+                    } elseif (!($this->rows[$rowIndex - 1][0] instanceof CreateClause) && $row[0] instanceof CreateClause) {
                         $rowStringParts .= ' CREATE ';
                     } elseif (!($this->rows[$rowIndex - 1][0] instanceof WherePart) && $row[0] instanceof WherePart) {
                         $rowStringParts .= 'WHERE ';
@@ -215,7 +223,7 @@ class Builder
                 if ($rowIndex > 0) {
                     if ($this->rows[$rowIndex][0] instanceof MatchClause && $this->rows[$rowIndex - 1][0] instanceof MatchClause) {
                         $rowStringParts = ', ' . $rowStringParts;
-                    } elseif ($this->rows[$rowIndex][0] instanceof CreateNode && $this->rows[$rowIndex - 1][0] instanceof CreateNode) {
+                    } elseif ($this->rows[$rowIndex][0] instanceof CreateClause && $this->rows[$rowIndex - 1][0] instanceof CreateClause) {
                         $rowStringParts = ', ' . $rowStringParts;
                     } else {
                         $rowStringParts = ' ' . $rowStringParts;

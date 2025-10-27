@@ -205,6 +205,28 @@ class CreateTest extends TestCase
         $this->assertSame('Michael', $path[4]->properties['name']);
     }
 
+    public function testCreateRaw()
+    {
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->createRaw('(a:Person {name: $v1})-[r:KNOWS]->(b:Person)', ['Alice'])
+                ->return('a');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$CREATE (a:Person {name: \$v1})-[r:KNOWS]->(b:Person) RETURN a$$, ?) as (a agtype)",
+            $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":"Alice"}'],
+            $query->getBindings()
+        );
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        $this->assertSame('Alice', $result[0]->a->properties['name']);
+    }
+
     // TODO: test2
     // M MN ME MN
     // ORDER
