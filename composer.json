@@ -60,7 +60,7 @@
         ],
         "test": [
             "@clear",
-            "@php vendor/bin/phpunit --coverage-clover ./coverage.xml"
+            "@php vendor/bin/phpunit --coverage-clover ./coverage.xml --log-junit ./junit.xml"
         ],
         "phpstan": [
             "@php vendor/bin/phpstan analyse --memory-limit=2G"
