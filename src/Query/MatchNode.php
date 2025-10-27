@@ -2,11 +2,14 @@
 
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Override;
 
-class MatchNode extends MatchBase
+class MatchNode implements Clause
 {
+    use Concerns\WithProperties;
+
     public function __construct(
         public readonly ?string $name,
         protected readonly ?string $label,

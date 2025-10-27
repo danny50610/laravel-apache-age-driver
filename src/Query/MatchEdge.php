@@ -3,11 +3,14 @@
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Override;
 
-class MatchEdge extends MatchBase
+class MatchEdge implements Clause
 {
+    use Concerns\WithProperties;
+
     public function __construct(
         protected readonly Direction $direction,
         public readonly ?string $name,

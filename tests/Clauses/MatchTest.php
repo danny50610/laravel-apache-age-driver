@@ -173,7 +173,7 @@ class MatchTest extends TestCase
         });
 
         $this->assertSame(
-            "select * from cypher('graph_name', \$\$MATCH (v)WHERE id(v) = \$v1  RETURN v$$, ?) as (v agtype)",
+            "select * from cypher('graph_name', \$\$MATCH (v) WHERE id(v) = \$v1 RETURN v$$, ?) as (v agtype)",
             $query->toSql(),
         );
 

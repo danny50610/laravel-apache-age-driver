@@ -2,10 +2,11 @@
 
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Override;
 
-class CreateNode extends CreateBase
+class CreateNode implements Clause
 {
     use Concerns\WithProperties;
 

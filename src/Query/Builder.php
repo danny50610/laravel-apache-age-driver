@@ -11,26 +11,13 @@ class Builder
 {
     protected ?string $queryString = null;
 
+    // ex: '(a agtype, b agtype, r agtype)'
     protected ?string $as = null;
 
     protected array $parameters = [];
 
-    /** @var array<int, array<MatchBase>> */
-    protected array $matches = [];
-
-    /** @var array<int, WherePart> */
-    protected array $wheres = [];
-
-    /** @var array<int, array<CreateNode>> */
-    protected array $creates = [];
-
-    protected array $sets = [];
-
-    protected array $deletes = [];
-
-    protected array $removes = [];
-
-    protected array $returns = [];
+    /** @var array<int, array<int, Clause>> */
+    protected array $rows = [];
 
     public function raw(string $queryString, string $as, array $parameters): static
     {
@@ -43,59 +30,45 @@ class Builder
 
     public function matchNode(?string $name = null, ?string $label = null, array $properties = []): static
     {
-        /** @var array<int, MatchBase>  */
-        $newMatches = [];
-        $newMatches[] = new MatchNode($name, $label, $properties);
-
-        $this->matches[] = $newMatches;
+        $this->rows[] = [
+            new MatchNode($name, $label, $properties),
+        ];
 
         return $this;
     }
 
     public function withMatchNode(?string $name = null, ?string $label = null, array $properties = []): static
     {
-        $lastMatches =& $this->getLastMatches();
-        $lastMatches[] = new MatchNode($name, $label, $properties);
+        $lastRow =& $this->getLastRow();
+        if (!($lastRow[count($lastRow) - 1] instanceof MatchEdge)) {
+            throw new LogicException('The last clause is not a MatchEdge');
+        }
+
+        $lastRow[] = new MatchNode($name, $label, $properties);
 
         return $this;
     }   
 
     public function withMatchEdge(Direction $direction, ?string $name = null, ?string $label = null, array $properties = []): static
     {
-        $lastMatches =& $this->getLastMatches();
-        $lastMatches[] = new MatchEdge($direction, $name, $label, $properties);
+        $lastRow =& $this->getLastRow();
+        if (!($lastRow[count($lastRow) - 1] instanceof MatchNode)) {
+            throw new LogicException('The last clause is not a MatchNode');
+        }
+
+        $lastRow[] = new MatchEdge($direction, $name, $label, $properties);
 
         return $this;
     }
 
-    protected function &getLastMatches(): array
+    protected function &getLastRow(): array
     {
-        $lastIndex = count($this->matches) - 1;
+        $lastIndex = count($this->rows) - 1;
         if ($lastIndex < 0) {
             throw new LogicException('Need call matchNode() first');
         }
-        $lastMatches =& $this->matches[$lastIndex];
-        $lastMatchesIndex = count($lastMatches) - 1;
-        if ($lastMatchesIndex < 0) {
-            throw new LogicException('Need call matchNode() first');
-        }
 
-        return $lastMatches;
-    }
-
-    protected function &getLastCreates(): array
-    {
-        $lastIndex = count($this->creates) - 1;
-        if ($lastIndex < 0) {
-            throw new LogicException('Need call createNode() first');
-        }
-        $lastCreates =& $this->creates[$lastIndex];
-        $lastCreatesIndex = count($lastCreates) - 1;
-        if ($lastCreatesIndex < 0) {
-            throw new LogicException('Need call createNode() first');
-        }
-
-        return $lastCreates;
+        return $this->rows[$lastIndex];
     }
 
     // TODO: matchRaw (append)
@@ -103,40 +76,51 @@ class Builder
     // TODO: orWhere
     public function where(string $column, string $operator, mixed $value): static
     {
-        $this->wheres[] = new WherePart($column, $operator, $value);
+        $this->rows[] = [
+            new WherePart($column, $operator, $value),
+        ];
 
         return $this;
     }
 
     public function return(string $return): static
     {
-        $this->returns[] = $return;
+        $this->rows[] = [
+            new ReturnClause($return),
+        ];
 
         return $this;
     }
 
     public function createNode(?string $name = null, ?string $label = null, array $properties = [], ?string $assign = null): static
     {
-        $newCreates = [];
-        $newCreates[] = new CreateNode($name, $label, $properties, $assign);
-
-        $this->creates[] = $newCreates;
+        $this->rows[] = [
+            new CreateNode($name, $label, $properties, $assign),
+        ];
 
         return $this;
     }
 
     public function withCreateNode(?string $name = null, ?string $label = null, array $properties = []): static
     {
-        $lastCreates =& $this->getLastCreates();
-        $lastCreates[] = new CreateNode($name, $label, $properties, null);
+        $lastRow =& $this->getLastRow();
+        if (!($lastRow[count($lastRow) - 1] instanceof CreateEdge)) {
+            throw new LogicException('The last clause is not a CreateEdge');
+        }
+        
+        $lastRow[] = new CreateNode($name, $label, $properties, null);
 
         return $this;
     }
 
     public function withCreateEdge(Direction $direction, ?string $name = null, ?string $label = null, array $properties = []): static
     {
-        $lastCreates =& $this->getLastCreates();
-        $lastCreates[] = new CreateEdge($direction, $name, $label, $properties);
+        $lastRow =& $this->getLastRow();
+        if (!($lastRow[count($lastRow) - 1] instanceof CreateNode)) {
+            throw new LogicException('The last clause is not a CreateNode');
+        }
+
+        $lastRow[] = new CreateEdge($direction, $name, $label, $properties);
 
         return $this;
     }
@@ -145,21 +129,27 @@ class Builder
 
     public function set(array $values): static
     {
-        $this->sets[] = new SetPart($values);
+        $this->rows[] = [
+            new SetClause($values),
+        ];
 
         return $this;
     }
 
     public function delete(string|array $name, bool $isDetached = false): static
     {
-        $this->deletes[] = new DeletePart($name, $isDetached);
+        $this->rows[] = [
+            new DeleteClause($name, $isDetached),
+        ];
 
         return $this;
     }
 
     public function remove(string|array $propertyName): static
     {
-        $this->removes[] = new RemovePart($propertyName);
+        $this->rows[] = [
+            new RemoveClause($propertyName),
+        ];
 
         return $this;
     }
@@ -183,77 +173,62 @@ class Builder
         $parametersCount = 1;
 
         $this->queryString = '';
-        if (count($this->matches) > 0) {
-            $this->queryString .= 'MATCH ';
-            $this->queryString .= collect($this->matches)
-                ->map(function ($matches) use ($grammar, &$parameter, &$parametersCount) {
-                    return collect($matches)->map(function ($match) use ($grammar, &$parameter, &$parametersCount) {
-                        return $match->toQueryString($grammar, $parameter, $parametersCount);
-                    })->join('');
-                })->join(', ');
-        }
+        $returns = [];
+        if (count($this->rows) > 0) {
+            foreach ($this->rows as $rowIndex => $row) {
+                $rowStringParts = '';
+                if ($rowIndex === 0) {
+                    if ($row[0] instanceof MatchNode) {
+                        $rowStringParts .= 'MATCH ';
+                    } elseif ($row[0] instanceof CreateNode) {
+                        $rowStringParts .= 'CREATE ';
+                    }
+                } else {
+                    if (!($this->rows[$rowIndex - 1][0] instanceof MatchNode) && $row[0] instanceof MatchNode) {
+                        $rowStringParts .= ' MATCH ';
+                    } elseif (!($this->rows[$rowIndex - 1][0] instanceof CreateNode) && $row[0] instanceof CreateNode) {
+                        $rowStringParts .= ' CREATE ';
+                    } elseif (!($this->rows[$rowIndex - 1][0] instanceof WherePart) && $row[0] instanceof WherePart) {
+                        $rowStringParts .= 'WHERE ';
+                    } elseif ($this->rows[$rowIndex - 1][0] instanceof WherePart && $row[0] instanceof WherePart) {
+                        $rowStringParts .= 'AND ';
+                    }
+                }
 
-        if (count($this->wheres) > 0) {
-            $this->queryString .= 'WHERE ';
-            $this->queryString .= collect($this->wheres)
-                ->map(function ($where) use (&$parameter, &$parametersCount) {
-                    return $where->toQueryString($parameter, $parametersCount);
-                })->join(' AND ');
-            $this->queryString .= ' ';
-        }
+                foreach ($row as $clause) {
+                    $rowStringParts .= $clause->toQueryString($grammar, $parameter, $parametersCount);
 
-        if (count($this->creates) > 0) {
-            $this->queryString .= 'CREATE ';
-            $this->queryString .= collect($this->creates)
-                ->map(function ($creates) use ($grammar, &$parameter, &$parametersCount) {
-                    return collect($creates)->map(function ($create) use ($grammar, &$parameter, &$parametersCount) {
-                        return $create->toQueryString($grammar, $parameter, $parametersCount);
-                    })->join('');
-                })->join(', ');
-        }
+                    if ($clause instanceof ReturnClause) {
+                        $returns = array_merge($returns, $clause->getReturn());
+                    }
+                }
 
-        if (count($this->sets) > 0) {
-            $this->queryString .= ' SET ';
-            $this->queryString .= collect($this->sets)
-                ->map(function ($set) use ($grammar, &$parameter, &$parametersCount) {
-                    return $set->toQueryString($grammar, $parameter, $parametersCount);
-                })->join(' ');
-        }
-
-        if (count($this->deletes) > 0) {
-            $this->queryString .= ' ';
-            $this->queryString .= collect($this->deletes)
-                ->map(function ($delete) use ($grammar, &$parameter, &$parametersCount) {
-                    return $delete->toQueryString($grammar, $parameter, $parametersCount);
-                })->join(' ');
-        }
-
-        if (count($this->removes) > 0) {
-            $this->queryString .= ' ';
-            $this->queryString .= collect($this->removes)
-                ->map(function ($remove) use ($grammar, &$parameter, &$parametersCount) {
-                    return $remove->toQueryString($grammar, $parameter, $parametersCount);
-                })->join(' ');
-        }
-
-        if (count($this->returns) > 0) {
-            $this->queryString .= ' RETURN ';
-            $this->queryString .= Arr::join($this->returns, ', ');
-
-            // ex: '(a agtype, b agtype, r agtype)'
-            if (count($this->returns) == 1 && $this->returns[0] === '*') {
-                $returns = collect($this->matches)
-                    ->map(fn($matches) => collect($matches)->map(fn($match) => $match->name)->filter())
-                    ->flatten();
-            } else {
-                $returns = $this->returns;
+                if ($rowIndex > 0) {
+                    if ($this->rows[$rowIndex][0] instanceof MatchNode && $this->rows[$rowIndex - 1][0] instanceof MatchNode) {
+                        $rowStringParts = ', ' . $rowStringParts;
+                    } elseif ($this->rows[$rowIndex][0] instanceof CreateNode && $this->rows[$rowIndex - 1][0] instanceof CreateNode) {
+                        $rowStringParts = ', ' . $rowStringParts;
+                    } else {
+                        $rowStringParts = ' ' . $rowStringParts;
+                    }
+                }
+                $this->queryString .= $rowStringParts;
             }
+        }
 
-            if (is_null($this->as)) {
-                $this->as = '(' . collect($returns)
-                        ->map(fn ($item) => $item . ' agtype')
-                        ->join(', ') . ')';
+        if (is_null($this->as)) {
+            if (count($returns) == 1 && $returns[0] === '*') {
+                $returns = collect($this->rows)
+                    ->flatMap(fn ($row) => $row)
+                    ->filter(fn ($clause) => $clause instanceof MatchNode || $clause instanceof MatchEdge)
+                    ->map(fn ($clause) => $clause->name)
+                    ->values()
+                    ->all();
             }
+        
+            $this->as = '(' . collect($returns)
+                    ->map(fn ($item) => $item . ' agtype')
+                    ->join(', ') . ')';
         }
 
         $this->parameters = $parameter;

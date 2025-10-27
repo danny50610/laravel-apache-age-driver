@@ -3,10 +3,11 @@
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Override;
 
-class CreateEdge extends CreateBase
+class CreateEdge implements Clause
 {
     use Concerns\WithProperties;
 

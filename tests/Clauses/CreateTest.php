@@ -112,7 +112,7 @@ class CreateTest extends TestCase
         });
 
         $this->assertSame(
-            "select * from cypher('graph_name', \$\$MATCH (a:Person), (b:Person)WHERE a.name = \$v1 AND b.name = \$v2 CREATE (a)-[e:RELTYPE]->(b) RETURN e$$, ?) as (e agtype)",
+            "select * from cypher('graph_name', \$\$MATCH (a:Person), (b:Person) WHERE a.name = \$v1 AND b.name = \$v2  CREATE (a)-[e:RELTYPE]->(b) RETURN e$$, ?) as (e agtype)",
             $query->toSql(),
         );
 
@@ -141,7 +141,7 @@ class CreateTest extends TestCase
         });
 
         $this->assertSame(
-            "select * from cypher('graph_name', \$\$MATCH (a:Person), (b:Person)WHERE a.name = \$v1 AND b.name = \$v2 CREATE (a)-[e:RELTYPE {name: a.name + '<->' + b.name}]->(b) RETURN e$$, ?) as (e agtype)",
+            "select * from cypher('graph_name', \$\$MATCH (a:Person), (b:Person) WHERE a.name = \$v1 AND b.name = \$v2  CREATE (a)-[e:RELTYPE {name: a.name + '<->' + b.name}]->(b) RETURN e$$, ?) as (e agtype)",
             $query->toSql(),
         );
 
@@ -205,4 +205,14 @@ class CreateTest extends TestCase
         $this->assertSame('Michael', $path[4]->properties['name']);
     }
 
+    // TODO: test1
+    // M MN ME MN
+    // M MN ME MN
+    // R
+
+    // TODO: test2
+    // M MN ME MN
+    // ORDER
+    // M MN ME MN
+    // RETURN
 }

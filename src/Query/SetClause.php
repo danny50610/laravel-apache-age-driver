@@ -2,9 +2,10 @@
 
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
 use Illuminate\Database\Query\Grammars\Grammar;
 
-class SetPart
+class SetClause implements Clause
 {
     public function __construct(
         protected readonly array $values,
@@ -27,6 +28,6 @@ class SetPart
 
         }
 
-        return implode(', ', $resultList);
+        return 'SET ' . implode(', ', $resultList);
     }
 }

@@ -2,7 +2,10 @@
 
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
-class WherePart
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
+use Illuminate\Database\Query\Grammars\Grammar;
+
+class WherePart implements Clause
 {
     public function __construct(
         protected readonly string $column,
@@ -11,7 +14,7 @@ class WherePart
     ) {
     }
 
-    public function toQueryString(array &$parameters, int &$parametersCount): string
+    public function toQueryString(Grammar $grammar, array &$parameters, int &$parametersCount): string
     {
         // ex: a.name = $v1
         if (is_string($this->value)) {

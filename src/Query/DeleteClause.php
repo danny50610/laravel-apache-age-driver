@@ -2,9 +2,10 @@
 
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
 use Illuminate\Database\Query\Grammars\Grammar;
 
-class DeletePart
+class DeleteClause implements Clause
 {
     public function __construct(
         protected readonly string|array $name,
