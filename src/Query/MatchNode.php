@@ -3,10 +3,11 @@
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\MatchClause;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Override;
 
-class MatchNode implements Clause
+class MatchNode implements Clause, MatchClause
 {
     use Concerns\WithProperties;
 

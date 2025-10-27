@@ -4,11 +4,12 @@ namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\MatchClause;
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\VariableLengthInfo;
 use Illuminate\Database\Query\Grammars\Grammar;
 use Override;
 
-class MatchEdge implements Clause
+class MatchEdge implements Clause, MatchClause
 {
     use Concerns\WithProperties;
 

@@ -288,4 +288,37 @@ class MatchTest extends TestCase
         $this->assertSame($node[0]->v->id, $result[0]->v->id);
     }
 
+    public function testMatchRaw()
+    {
+        DB::statement("
+            SELECT * FROM cypher('graph_name', $$
+                CREATE (a:Person {name: 'Danny'})-[r:KNOWS]->(b:Person)
+            $$) as (a agtype);
+        ");
+        DB::statement("
+            SELECT * FROM cypher('graph_name', $$
+                CREATE (a:Person {name: 'Alice'})-[r:KNOWS]->(b:Person)
+            $$) as (a agtype);
+        ");
+
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchRaw('(a:Person {name: $v1})-[r:KNOWS]->(b:Person)', ['Alice'])
+                ->return('a');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (a:Person {name: \$v1})-[r:KNOWS]->(b:Person) RETURN a$$, ?) as (a agtype)",
+            $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":"Alice"}'],
+            $query->getBindings()
+        );
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        $this->assertSame(['name' => 'Alice'], $result[0]->a->properties);
+    }
+
 }
