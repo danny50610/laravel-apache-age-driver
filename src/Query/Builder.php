@@ -4,6 +4,7 @@ namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\VariableLengthInfo;
 use Illuminate\Database\Query\Grammars\Grammar;
 use LogicException;
 
@@ -28,10 +29,10 @@ class Builder
         return $this;
     }
 
-    public function matchNode(?string $name = null, ?string $label = null, array $properties = []): static
+    public function matchNode(?string $name = null, ?string $label = null, array $properties = [], ?string $assign = null): static
     {
         $this->rows[] = [
-            new MatchNode($name, $label, $properties),
+            new MatchNode($name, $label, $properties, $assign),
         ];
 
         return $this;
@@ -44,19 +45,19 @@ class Builder
             throw new LogicException('The last clause is not a MatchEdge');
         }
 
-        $lastRow[] = new MatchNode($name, $label, $properties);
+        $lastRow[] = new MatchNode($name, $label, $properties, null);
 
         return $this;
     }   
 
-    public function withMatchEdge(Direction $direction, ?string $name = null, ?string $label = null, array $properties = []): static
+    public function withMatchEdge(Direction $direction, ?string $name = null, ?string $label = null, array $properties = [], ?VariableLengthInfo $variableLengthInfo): static
     {
         $lastRow =& $this->getLastRow();
         if (!($lastRow[count($lastRow) - 1] instanceof MatchNode)) {
             throw new LogicException('The last clause is not a MatchNode');
         }
 
-        $lastRow[] = new MatchEdge($direction, $name, $label, $properties);
+        $lastRow[] = new MatchEdge($direction, $name, $label, $properties, $variableLengthInfo);
 
         return $this;
     }

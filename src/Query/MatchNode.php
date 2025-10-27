@@ -14,6 +14,7 @@ class MatchNode implements Clause
         public readonly ?string $name,
         protected readonly ?string $label,
         protected readonly array $properties,
+        protected readonly ?string $assign,
     ) {
     }
 
@@ -24,9 +25,10 @@ class MatchNode implements Clause
         // ex: (a)
         // ex: (a:Home)
         // ex: (b:Home {name: $v1})
+        $assignPart = $this->assign ? "{$this->assign} = " : '';
         $namePart = $this->name ? $this->name : '';
         $labelPart = $this->label ? ":{$this->label}" : '';
         $propertiesJsonPart = empty($this->properties) ? '' : ' ' . $this->propertiesToString($grammar, $parameters, $parametersCount);
-        return "({$namePart}{$labelPart}{$propertiesJsonPart})";
+        return "{$assignPart}({$namePart}{$labelPart}{$propertiesJsonPart})";
     }
 }

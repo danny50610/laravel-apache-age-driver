@@ -3,7 +3,9 @@
 namespace Danny50610\LaravelApacheAgeDriver\Tests\Clauses;
 
 use Danny50610\LaravelApacheAgeDriver\Enums\Direction;
+use Danny50610\LaravelApacheAgeDriver\Models\Path;
 use Danny50610\LaravelApacheAgeDriver\Query\Builder;
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\VariableLengthInfo;
 use Danny50610\LaravelApacheAgeDriver\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 
@@ -156,9 +158,106 @@ class MatchTest extends TestCase
         $this->assertSame(['name' => 'Node B'], $result[0]->b->properties);
     }
 
-    // TODO: testMatchPath
+    public function testMatchVariableLengthEdges()
+    {
+        DB::statement("
+            SELECT * FROM cypher('graph_name', $$
+                CREATE (:startNode), (:endNode)
+            $$) as (a agtype);
+        ");
 
-    // TODO: testMatchPREPARE
+        DB::statement("
+            SELECT * FROM cypher('graph_name', $$
+                MATCH (startnode:startNode), (endnode:endNode)
+                CREATE (startnode)-[:RELTYPE]->(endnode),
+                    (startnode)-[:RELTYPE]->()-[:RELTYPE]->(endnode),
+                    (startnode)-[:RELTYPE]->()-[:RELTYPE]->()-[:RELTYPE]->(endnode),
+                    (startnode)-[:RELTYPE]->()-[:RELTYPE]->()-[:RELTYPE]->()-[:RELTYPE]->(endnode),
+                    (startnode)-[:RELTYPE]->()-[:RELTYPE]->()-[:RELTYPE]->()-[:RELTYPE]->()-[:RELTYPE]->(endnode)
+            $$) as (a agtype);
+        ");
+
+        // (start:startNode)-[*2]->(end:endNode)
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('startend', 'startNode', [], 'p')
+                ->withMatchEdge(Direction::RIGHT, null, null, [], new VariableLengthInfo(2, 2))
+                ->withMatchNode('endnode', 'endNode')
+                ->return('p');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH p = (startend:startNode)-[*2]->(endnode:endNode) RETURN p$$) as (p agtype)",
+            $query->toSql(),
+        );
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+
+        // (start:startNode)-[*3..5]->(end:endNode)
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('startend', 'startNode', [], 'p')
+                ->withMatchEdge(Direction::RIGHT, null, null, [], new VariableLengthInfo(3, 5))
+                ->withMatchNode('endnode', 'endNode')
+                ->return('p');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH p = (startend:startNode)-[*3..5]->(endnode:endNode) RETURN p$$) as (p agtype)",
+            $query->toSql(),
+        );
+
+        $result = $query->get();
+        $this->assertCount(3, $result);
+
+        // (start:startNode)-[*3..]->(end:endNode)
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('startnode', 'startNode', [], 'p')
+                ->withMatchEdge(Direction::RIGHT, null, null, [], new VariableLengthInfo(3, null))
+                ->withMatchNode('endnode', 'endNode')
+                ->return('p');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH p = (startnode:startNode)-[*3..]->(endnode:endNode) RETURN p$$) as (p agtype)",
+            $query->toSql(),
+        );
+
+        $result = $query->get();
+        $this->assertCount(3, $result);
+
+        // (start:startNode)-[*..5]->(end:endNode)
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('startnode', 'startNode', [], 'p')
+                ->withMatchEdge(Direction::RIGHT, null, null, [], new VariableLengthInfo(null, 5))
+                ->withMatchNode('endnode', 'endNode')
+                ->return('p');
+        });
+
+        $result = $query->get();
+        $this->assertCount(5, $result);
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH p = (startnode:startNode)-[*..5]->(endnode:endNode) RETURN p$$) as (p agtype)",
+            $query->toSql(),
+        );
+
+        // (start:startNode)-[*]->(end:endNode)
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('startnode', 'startNode', [], 'p')
+                ->withMatchEdge(Direction::RIGHT, null, null, [], new VariableLengthInfo(null, null))
+                ->withMatchNode('endnode', 'endNode')
+                ->return('p');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH p = (startnode:startNode)-[*]->(endnode:endNode) RETURN p$$) as (p agtype)",
+            $query->toSql(),
+        );
+
+        $result = $query->get();
+        $this->assertCount(5, $result);
+        $this->assertTrue($result[0]->p instanceof Path);
+    }
 
     public function testMatchId()
     {
