@@ -91,3 +91,6 @@ _tinker*.php
 composer.lock
 coverage
 TODO.md
+junit.xml
+coverage.xml
+
