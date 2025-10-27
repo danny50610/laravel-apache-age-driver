@@ -205,11 +205,6 @@ class CreateTest extends TestCase
         $this->assertSame('Michael', $path[4]->properties['name']);
     }
 
-    // TODO: test1
-    // M MN ME MN
-    // M MN ME MN
-    // R
-
     // TODO: test2
     // M MN ME MN
     // ORDER
