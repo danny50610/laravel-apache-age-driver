@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.6.0] - 2023-10-22
+
+- Support MATCH Variable Length Edges
+- Add MatchRaw, CreateRaw
+
 ## [0.5.0] - 2023-10-22
 
 - Finish DELETE, REMOVE, SET
