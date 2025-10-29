@@ -89,3 +89,15 @@ parameters:
 			identifier: foreach.nonIterable
 			count: 1
 			path: src/Query/AfterQuery.php
+
+		-
+			message: '#^Parameter &\$parameters by\-ref type of method Danny50610\\LaravelApacheAgeDriver\\Query\\WhereClosureClause\:\:toQueryString\(\) expects array, array\|null given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Query/WhereClosureClause.php
+
+		-
+			message: '#^Parameter &\$parametersCount by\-ref type of method Danny50610\\LaravelApacheAgeDriver\\Query\\WhereClosureClause\:\:toQueryString\(\) expects int, int\|null given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Query/WhereClosureClause.php

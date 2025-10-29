@@ -201,7 +201,7 @@ class Builder
         return $this;
     }
 
-    public function build(Grammar $grammar, array &$parameters = null, int &$parametersCount = null)
+    public function build(Grammar $grammar, ?array &$parameters = null, ?int &$parametersCount = null)
     {
         if (!is_null($this->queryString)) {
             return;
