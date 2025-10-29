@@ -87,7 +87,7 @@ class Builder
     public function where(string $column, string $operator, mixed $value): static
     {
         $this->rows[] = [
-            new WherePart($column, $operator, $value),
+            new WhereClause($column, $operator, $value),
         ];
 
         return $this;
@@ -205,9 +205,9 @@ class Builder
                         $rowStringParts .= ' MATCH ';
                     } elseif (!($this->rows[$rowIndex - 1][0] instanceof CreateClause) && $row[0] instanceof CreateClause) {
                         $rowStringParts .= ' CREATE ';
-                    } elseif (!($this->rows[$rowIndex - 1][0] instanceof WherePart) && $row[0] instanceof WherePart) {
+                    } elseif (!($this->rows[$rowIndex - 1][0] instanceof WhereClause) && $row[0] instanceof WhereClause) {
                         $rowStringParts .= 'WHERE ';
-                    } elseif ($this->rows[$rowIndex - 1][0] instanceof WherePart && $row[0] instanceof WherePart) {
+                    } elseif ($this->rows[$rowIndex - 1][0] instanceof WhereClause && $row[0] instanceof WhereClause) {
                         $rowStringParts .= 'AND ';
                     }
                 }

@@ -5,7 +5,7 @@ namespace Danny50610\LaravelApacheAgeDriver\Query;
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
 use Illuminate\Database\Query\Grammars\Grammar;
 
-class WherePart implements Clause
+class WhereClause implements Clause
 {
     public function __construct(
         protected readonly string $column,
