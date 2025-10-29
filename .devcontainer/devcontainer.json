@@ -17,7 +17,8 @@
                 "bmewburn.vscode-intelephense-client",
                 "danny50610.php-namespace-resolver-danny50610",
                 "ms-azuretools.vscode-containers",
-                "mhutchie.git-graph"
+                "mhutchie.git-graph",
+                "eamodio.gitlens"
             ]
         }
     }
