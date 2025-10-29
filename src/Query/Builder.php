@@ -114,7 +114,16 @@ class Builder
         return $this;
     }
 
-    public function return(string $return): static
+    public function with(string|array $withs): static
+    {
+        $this->rows[] = [
+            new WithClause($withs),
+        ];
+
+        return $this;
+    }
+
+    public function return(string|array $return): static
     {
         $this->rows[] = [
             new ReturnClause($return),
