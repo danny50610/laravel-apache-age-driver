@@ -11,7 +11,13 @@ class WhereClause implements Clause
         protected readonly string $column,
         protected readonly string $operator,
         protected readonly mixed $value,
+        protected readonly string $boolean = 'and',
     ) {
+    }
+
+    public function getBoolean(): string
+    {
+        return $this->boolean;
     }
 
     public function toQueryString(Grammar $grammar, array &$parameters, int &$parametersCount): string

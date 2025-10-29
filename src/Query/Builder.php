@@ -83,11 +83,19 @@ class Builder
         return $this->rows[$lastIndex];
     }
 
-    // TODO: orWhere
-    public function where(string $column, string $operator, mixed $value): static
+    public function where(string $column, string $operator, mixed $value, string $boolean = 'and'): static
     {
         $this->rows[] = [
-            new WhereClause($column, $operator, $value),
+            new WhereClause($column, $operator, $value, $boolean),
+        ];
+
+        return $this;
+    }
+
+    public function orWhere(string $column, string $operator, mixed $value): static
+    {
+        $this->rows[] = [
+            new WhereClause($column, $operator, $value, 'or'),
         ];
 
         return $this;
@@ -208,7 +216,12 @@ class Builder
                     } elseif (!($this->rows[$rowIndex - 1][0] instanceof WhereClause) && $row[0] instanceof WhereClause) {
                         $rowStringParts .= 'WHERE ';
                     } elseif ($this->rows[$rowIndex - 1][0] instanceof WhereClause && $row[0] instanceof WhereClause) {
-                        $rowStringParts .= 'AND ';
+                        $boolean = $row[0]->getBoolean();
+                        if ($boolean === 'or') {
+                            $rowStringParts .= 'OR ';
+                        } else {
+                            $rowStringParts .= 'AND ';
+                        }
                     }
                 }
 
