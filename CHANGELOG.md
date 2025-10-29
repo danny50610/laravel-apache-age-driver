@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.7.0] - 
+
+- Add orWhere
+- Add WhereClosureClause
+
 ## [0.6.0] - 2023-10-22
 
 - Support MATCH Variable Length Edges

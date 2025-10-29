@@ -94,4 +94,67 @@ class WhereTest extends TestCase
         $this->assertSame('TempNode', $result[0]->v->label);
         $this->assertSame(['age' => 30, 'name' => 'Temp'], $result[0]->v->properties);
     }
+
+    public function testClosureWhere()
+    {
+        DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->createNode('v', 'TempNode', ['name' => 'Temp', 'age' => 30, 'location' => 'USA'])->return('v');
+        })->get();
+
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('v')
+                ->where('v.name', '=', 'Temp')
+                ->where(function (Builder $builder) {
+                    $builder->where('v.age', '>', 20)
+                        ->orWhere('v.location', '=', 'Canada');
+                })
+                ->return('v');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (v) WHERE v.name = \$v1 AND (v.age > \$v2 OR v.location = \$v3) RETURN v$$, ?) as (v agtype)",
+            $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":"Temp","v2":20,"v3":"Canada"}'],
+            $query->getBindings()
+        );
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        $this->assertSame('TempNode', $result[0]->v->label);
+        $this->assertSame(['age' => 30, 'name' => 'Temp', 'location' => 'USA'], $result[0]->v->properties);
+    }
+
+    public function testClosureWhereOnly()
+    {
+        DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->createNode('v', 'TempNode', ['name' => 'Temp', 'age' => 30, 'location' => 'USA'])->return('v');
+        })->get();
+
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) {
+            return $builder->matchNode('v')
+                ->where(function (Builder $builder) {
+                    $builder->where('v.age', '>', 20)
+                        ->orWhere('v.location', '=', 'Canada');
+                })
+                ->return('v');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (v) WHERE (v.age > \$v1 OR v.location = \$v2) RETURN v$$, ?) as (v agtype)",
+            $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":20,"v2":"Canada"}'],
+            $query->getBindings()
+        );
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        $this->assertSame('TempNode', $result[0]->v->label);
+        $this->assertSame(['age' => 30, 'name' => 'Temp', 'location' => 'USA'], $result[0]->v->properties);
+    }
 }

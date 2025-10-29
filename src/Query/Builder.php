@@ -7,6 +7,7 @@ use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\CreateClause;
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\MatchClause;
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\VariableLengthInfo;
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\WhereClause;
 use Illuminate\Database\Query\Grammars\Grammar;
 use LogicException;
 
@@ -83,20 +84,32 @@ class Builder
         return $this->rows[$lastIndex];
     }
 
-    public function where(string $column, string $operator, mixed $value, string $boolean = 'and'): static
+    public function where($column, ?string $operator = null, mixed $value = null, string $boolean = 'and'): static
     {
-        $this->rows[] = [
-            new WhereClause($column, $operator, $value, $boolean),
-        ];
+        if (is_callable($column)) {
+            $this->rows[] = [
+                new WhereClosureClause($column, $boolean),
+            ];
+        } else {
+            $this->rows[] = [
+                new WherePartClause($column, $operator, $value, $boolean),
+            ];
+        }
 
         return $this;
     }
 
-    public function orWhere(string $column, string $operator, mixed $value): static
+    public function orWhere($column, ?string $operator = null, mixed $value = null): static
     {
-        $this->rows[] = [
-            new WhereClause($column, $operator, $value, 'or'),
-        ];
+        if (is_callable($column)) {
+            $this->rows[] = [
+                new WhereClosureClause($column, 'or'),
+            ];
+        } else {
+            $this->rows[] = [
+                new WherePartClause($column, $operator, $value, 'or'),
+            ];
+        }
 
         return $this;
     }
@@ -188,14 +201,18 @@ class Builder
         return $this;
     }
 
-    public function build(Grammar $grammar)
+    public function build(Grammar $grammar, array &$parameters = null, int &$parametersCount = null)
     {
         if (!is_null($this->queryString)) {
             return;
         }
 
-        $parameter = [];
-        $parametersCount = 1;
+        if (is_null($parameters)) {
+            $localParameters = [];
+        } else {
+            $localParameters =& $parameters;
+        }
+        $localParametersCount = is_null($parametersCount) ? 1 : $parametersCount;
 
         $this->queryString = '';
         $returns = [];
@@ -226,7 +243,7 @@ class Builder
                 }
 
                 foreach ($row as $clause) {
-                    $rowStringParts .= $clause->toQueryString($grammar, $parameter, $parametersCount);
+                    $rowStringParts .= $clause->toQueryString($grammar, $localParameters, $localParametersCount);
 
                     if ($clause instanceof ReturnClause) {
                         $returns = array_merge($returns, $clause->getReturn());
@@ -261,7 +278,15 @@ class Builder
                     ->join(', ') . ')';
         }
 
-        $this->parameters = $parameter;
+        $this->parameters = $localParameters;
+        if (!is_null($parametersCount)) {
+            $parametersCount = $localParametersCount;
+        }
+    }
+
+    public function getUnDoubleSignQueryString(): string
+    {
+        return $this->queryString;
     }
 
     public function getQueryString(): string

@@ -3,9 +3,10 @@
 namespace Danny50610\LaravelApacheAgeDriver\Query;
 
 use Danny50610\LaravelApacheAgeDriver\Query\Concerns\Clause;
+use Danny50610\LaravelApacheAgeDriver\Query\Concerns\WhereClause;
 use Illuminate\Database\Query\Grammars\Grammar;
 
-class WhereClause implements Clause
+class WherePartClause implements Clause, WhereClause
 {
     public function __construct(
         protected readonly string $column,
