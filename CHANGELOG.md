@@ -5,28 +5,28 @@
 - Add orWhere
 - Add WhereClosureClause
 
-## [0.6.0] - 2023-10-22
+## [0.6.0] - 2025-10-22
 
 - Support MATCH Variable Length Edges
 - Add MatchRaw, CreateRaw
 
-## [0.5.0] - 2023-10-22
+## [0.5.0] - 2025-10-22
 
 - Finish DELETE, REMOVE, SET
 
-## [0.4.0] - 2023-10-04
+## [0.4.0] - 2025-10-04
 
 - Add Direction BOTH
 
-## [0.3.0] - 2023-10-03
+## [0.3.0] - 2025-10-03
 
 - let where support int
 
-## [0.2.0] - 2023-09-30
+## [0.2.0] - 2025-09-30
 
 - Finish CREATE, MATCH, WHERE
 
-## [0.1.0] - 2023-08-21
+## [0.1.0] - 2025-08-21
 
 - `DB::apacheAgeCreateGraph('test_graph');`
 - `DB::apacheAgeDropGraph('graph_name', true);`
