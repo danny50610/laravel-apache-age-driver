@@ -132,6 +132,15 @@ class Builder
         return $this;
     }
 
+    public function skip(mixed $count): static
+    {
+        $this->rows[] = [
+            new SkipClause($count),
+        ];
+
+        return $this;
+    }
+
     public function return(string|array $return): static
     {
         $this->rows[] = [
