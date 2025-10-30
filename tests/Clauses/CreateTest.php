@@ -265,10 +265,4 @@ class CreateTest extends TestCase
             'isActive' => true,
         ], $result[0]->n->properties);
     }
-
-    // TODO: test2
-    // M MN ME MN
-    // ORDER
-    // M MN ME MN
-    // RETURN
 }

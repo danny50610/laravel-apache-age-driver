@@ -5,6 +5,7 @@
 - Add orWhere
 - Add WhereClosureClause
 - Add WithClause
+- Add OrderByClause
 
 ## [0.6.0] - 2025-10-22
 

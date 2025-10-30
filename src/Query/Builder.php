@@ -123,6 +123,15 @@ class Builder
         return $this;
     }
 
+    public function orderBy(string $column, string $direction = 'ASC'): static
+    {
+        $this->rows[] = [
+            new OrderByClause($column, $direction),
+        ];
+
+        return $this;
+    }
+
     public function return(string|array $return): static
     {
         $this->rows[] = [
@@ -248,6 +257,10 @@ class Builder
                         } else {
                             $rowStringParts .= 'AND ';
                         }
+                    } elseif (!($this->rows[$rowIndex - 1][0] instanceof OrderByClause) && $row[0] instanceof OrderByClause) {
+                        $rowStringParts .= ' ORDER BY ';
+                    } elseif ($this->rows[$rowIndex - 1][0] instanceof OrderByClause && $row[0] instanceof OrderByClause) {
+                        $rowStringParts .= ', ';
                     }
                 }
 
