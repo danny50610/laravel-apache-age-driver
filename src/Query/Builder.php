@@ -141,6 +141,15 @@ class Builder
         return $this;
     }
 
+    public function limit(mixed $count): static
+    {
+        $this->rows[] = [
+            new LimitClause($count),
+        ];
+
+        return $this;
+    }
+
     public function return(string|array $return): static
     {
         $this->rows[] = [

@@ -7,6 +7,7 @@
 - Add WithClause
 - Add OrderByClause
 - Add SkipClause
+- Add LimitClause
 
 ## [0.6.0] - 2025-10-22
 
