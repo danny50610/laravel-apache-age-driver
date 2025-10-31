@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.7.1] - 2025-10-31
+
+- update .gitattributes
+
 ## [0.7.0] - 2025-10-31
 
 - Add orWhere
