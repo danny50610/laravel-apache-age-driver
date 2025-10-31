@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.7.0] - 
+## [0.7.0] - 2025-10-31
 
 - Add orWhere
 - Add WhereClosureClause
@@ -9,7 +9,7 @@
 - Add SkipClause
 - Add LimitClause
 
-## [0.6.0] - 2025-10-22
+## [0.6.0] - 2025-10-27
 
 - Support MATCH Variable Length Edges
 - Add MatchRaw, CreateRaw
