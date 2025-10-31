@@ -39,10 +39,7 @@
         "laravel": {
             "providers": [
                 "Danny50610\\LaravelApacheAgeDriver\\ApacheAgeServiceProvider"
-            ],
-            "aliases": {
-                "ApacheAge": "Danny50610\\LaravelApacheAgeDriver\\ApacheAge"
-            }
+            ]
         }
     },
     "scripts": {

@@ -5,8 +5,6 @@ namespace Danny50610\LaravelApacheAgeDriver;
 use Closure;
 use Danny50610\LaravelApacheAgeDriver\Query\AfterQuery;
 use Danny50610\LaravelApacheAgeDriver\Query\Builder as QueryBuilder;
-use Danny50610\LaravelApacheAgeDriver\Services\ApacheAgeService;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Events\ConnectionEstablished;
 use Illuminate\Database\PostgresConnection;
 use Illuminate\Database\Query\Builder;
@@ -24,9 +22,6 @@ class ApacheAgeServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->scoped(ApacheAgeService::class, function (Application $app) {
-            return new ApacheAgeService();
-        });
     }
 
     public function boot(): void
