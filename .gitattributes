@@ -1,14 +1,21 @@
 # https://php.watch/articles/composer-gitattributes
 
 # folder
-/.vscode            export-ignore
-/tests              export-ignore
+/.devcontainer          export-ignore
+/.github                export-ignore
+/.vscode                export-ignore
+/tests                  export-ignore
+/workbench              export-ignore
 # file
-/.gitattributes     export-ignore
-/composer.lock      export-ignore
-/cspell.json        export-ignore
-/phpcs.xml          export-ignore
-/phpunit.xml        export-ignore
+/.gitattributes         export-ignore
+/Agtype.g4              export-ignore
+/composer.lock          export-ignore
+/cspell.json            export-ignore
+/phpcs.xml              export-ignore
+/phpunit.xml            export-ignore
+/phpstan.neon.dist      export-ignore
+/phpstan-baseline.neon  export-ignore
+/testbench.yaml         export-ignore
 
 *.php diff=php
 *.phar -diff
