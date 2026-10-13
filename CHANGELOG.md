@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.8.0] - 2026-10-13
+
+- Stop escaping bound string parameters in SET, WHERE, and properties
+
 ## [0.7.1] - 2025-10-31
 
 - update .gitattributes
