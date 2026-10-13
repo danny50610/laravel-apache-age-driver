@@ -24,13 +24,7 @@ class WherePartClause implements Clause, WhereClause
     public function toQueryString(Grammar $grammar, array &$parameters, int &$parametersCount): string
     {
         // ex: a.name = $v1
-        if (is_string($this->value)) {
-            $resultValue = addslashes($this->value);
-        } else {
-            $resultValue = $this->value;
-        }
-
-        $parameters['v' . $parametersCount] = $resultValue;
+        $parameters['v' . $parametersCount] = $this->value;
         $result =  "{$this->column} {$this->operator} \$v{$parametersCount}";
         $parametersCount += 1;
 

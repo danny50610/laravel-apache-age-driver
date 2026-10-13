@@ -102,4 +102,37 @@ class SetTest extends TestCase
         $this->assertCount(1, $result);
         $this->assertSame(['age' => 31, 'name' => 'Charles'], $result[0]->a->properties);
     }
+
+    public function testSetKeepsStringCharacters()
+    {
+        $name = "O'Brien \"A\" \\path";
+
+        DB::statement("
+            SELECT * FROM cypher('graph_name', $$
+                CREATE (:SetNodeTest { name: 'Alice' })
+            $$) as (a agtype);
+        ");
+
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) use ($name) {
+            return $builder
+                ->matchNode('a', 'SetNodeTest', ['name' => 'Alice'])
+                ->set(['a.name' => $name])
+                ->return('a');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (a:SetNodeTest {name: \$v1}) SET a.name = \$v2 RETURN a$$, ?) as (a agtype)",
+            $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":"Alice","v2":"O\'Brien \\"A\\" \\\\path"}'],
+            $query->getBindings()
+        );
+
+        $result = $query->get();
+
+        $this->assertCount(1, $result);
+        $this->assertSame($name, $result[0]->a->properties['name']);
+    }
 }

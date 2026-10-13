@@ -17,15 +17,9 @@ class SetClause implements Clause
         // ex: a.name = $v1, b.name = $v2
         $resultList = [];
         foreach ($this->values as $key => $value) {
-            if (is_string($value)) {
-                $resultValue = addslashes($value);
-            } else {
-                $resultValue = $value;
-            }
-            $parameters['v' . $parametersCount] = $resultValue;
+            $parameters['v' . $parametersCount] = $value;
             $resultList[] = "{$key} = \$v{$parametersCount}";
             $parametersCount += 1;
-
         }
 
         return 'SET ' . implode(', ', $resultList);

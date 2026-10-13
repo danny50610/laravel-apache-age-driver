@@ -157,4 +157,33 @@ class WhereTest extends TestCase
         $this->assertSame('TempNode', $result[0]->v->label);
         $this->assertSame(['age' => 30, 'name' => 'Temp', 'location' => 'USA'], $result[0]->v->properties);
     }
+
+    public function testWhereKeepsStringCharacters()
+    {
+        $name = "O'Brien \"A\" \\path";
+
+        DB::apacheAgeCypher('graph_name', function (Builder $builder) use ($name) {
+            return $builder->createNode('v', 'TempNode', ['name' => $name])->return('v');
+        })->get();
+
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) use ($name) {
+            return $builder->matchNode('v')
+                ->where('v.name', '=', $name)
+                ->return('v');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$MATCH (v) WHERE v.name = \$v1 RETURN v$$, ?) as (v agtype)",
+            $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":"O\'Brien \\"A\\" \\\\path"}'],
+            $query->getBindings()
+        );
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        $this->assertSame($name, $result[0]->v->properties['name']);
+    }
 }

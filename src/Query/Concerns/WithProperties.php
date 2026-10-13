@@ -13,18 +13,12 @@ trait WithProperties
     {
         $result = '{';
         $result .= collect($this->properties)->map(function($value, $key) use ($grammar, &$parameters, &$parametersCount) {
-            if (is_string($value)) {
-                $resultValue = addslashes($value);
-            } else {
-                $resultValue = $value;
-            }
-
             if (! $value instanceof ExpressionContract) {
-                $parameters['v' . $parametersCount] = $resultValue;
+                $parameters['v' . $parametersCount] = $value;
                 $result = $key . ': $v' . $parametersCount;
                 $parametersCount += 1;
             } else {
-                $result = $key . ': ' . $grammar->getValue($resultValue);
+                $result = $key . ': ' . $grammar->getValue($value);
             }
 
             return $result;

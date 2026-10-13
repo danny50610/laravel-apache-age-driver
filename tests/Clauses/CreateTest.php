@@ -265,4 +265,33 @@ class CreateTest extends TestCase
             'isActive' => true,
         ], $result[0]->n->properties);
     }
+
+    public function testCreateKeepsStringCharacters()
+    {
+        $name = "O'Brien \"A\" \\path";
+
+        $query = DB::apacheAgeCypher('graph_name', function (Builder $builder) use ($name) {
+            return $builder->createNode('n', 'Person', [
+                'name' => $name,
+                'address' => [
+                    'street' => "O'Brien",
+                ],
+            ])->return('n');
+        });
+
+        $this->assertSame(
+            "select * from cypher('graph_name', \$\$CREATE (n:Person {name: \$v1, address: \$v2}) RETURN n$$, ?) as (n agtype)",
+            $query->toSql(),
+        );
+
+        $this->assertSame(
+            ['{"v1":"O\'Brien \\"A\\" \\\\path","v2":{"street":"O\'Brien"}}'],
+            $query->getBindings()
+        );
+
+        $result = $query->get();
+        $this->assertCount(1, $result);
+        $this->assertSame($name, $result[0]->n->properties['name']);
+        $this->assertSame("O'Brien", $result[0]->n->properties['address']['street']);
+    }
 }
